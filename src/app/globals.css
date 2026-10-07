@@ -1,26 +1,492 @@
 @import "tailwindcss";
 
+/* ---------------------------------------------------------------------------
+   Color tokens. Neutral palette + one accent: Gator orange (#FA4616).
+   Light by default, dark via system preference or [data-theme="dark"].
+   --------------------------------------------------------------------------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --bg: #f7f7f5;
+  --bg-raised: #fbfbfa;
+  --fg: #111111;
+  --muted: #555553;
+  --subtle: #6b6b68;
+  --line: #e4e4e0;
+  --line-strong: #d0d0cb;
+  --panel: #efefeb;
+  --accent: #fa4616;
+  --spot: rgb(0 0 0 / 0.045);
+  --selection: #fdd9cc;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme="light"]) {
+    --bg: #0b0b0b;
+    --bg-raised: #111111;
+    --fg: #ececea;
+    --muted: #a6a6a2;
+    --subtle: #8c8c88;
+    --line: #1f1f1e;
+    --line-strong: #30302e;
+    --panel: #141413;
+    --accent: #fa4616;
+    --spot: rgb(255 255 255 / 0.06);
+    --selection: #4a1d10;
+    color-scheme: dark;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+:root[data-theme="dark"] {
+  --bg: #0b0b0b;
+  --bg-raised: #111111;
+  --fg: #ececea;
+  --muted: #a6a6a2;
+  --subtle: #8c8c88;
+  --line: #1f1f1e;
+  --line-strong: #30302e;
+  --panel: #141413;
+  --accent: #fa4616;
+  --spot: rgb(255 255 255 / 0.06);
+  --selection: #4a1d10;
+  color-scheme: dark;
 }
+
+/* ---------------------------------------------------------------------------
+   Type scale — seven steps, used everywhere. Keep to these.
+     meta     11.5  mono labels
+     small    13    metadata, captions
+     body     15    paragraphs
+     lead     17    intros
+     title    21    card + section titles
+     heading  28    page sub-headings
+     display  44    the name, project page titles
+   --------------------------------------------------------------------------- */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-raised: var(--bg-raised);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-panel: var(--panel);
+  --color-accent: var(--accent);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --text-meta: 0.71875rem;
+  --text-meta--line-height: 1rem;
+  --text-meta--letter-spacing: 0.08em;
+  --text-small: 0.8125rem;
+  --text-small--line-height: 1.25rem;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.6;
+  --text-lead: 1.0625rem;
+  --text-lead--line-height: 1.6;
+  --text-title: 1.3125rem;
+  --text-title--line-height: 1.3;
+  --text-title--letter-spacing: -0.02em;
+  --text-heading: 1.75rem;
+  --text-heading--line-height: 1.15;
+  --text-heading--letter-spacing: -0.03em;
+  --text-display: 2.75rem;
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.045em;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+  -webkit-text-size-adjust: 100%;
+  background: var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: var(--text-body);
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
+}
+
+::selection {
+  background: var(--selection);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* The palette input is focused the whole time the dialog is open; the
+   caret and the dialog itself are the focus indicator. */
+.palette-input:focus,
+.palette-input:focus-visible {
+  outline: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Components
+   --------------------------------------------------------------------------- */
+@layer components {
+  /* Small uppercase mono label — the only section-label style. */
+  .label {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    line-height: 1rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--subtle);
+  }
+
+  /* Text link with an underline that retracts on hover. */
+  .link {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 100% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition:
+      background-size 250ms var(--ease),
+      color 200ms ease;
+  }
+  .link:hover {
+    background-size: 0% 1px;
+    background-position: 100% 100%;
+  }
+
+  /* Link that draws an underline on hover. */
+  .link-quiet {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition:
+      background-size 250ms var(--ease),
+      color 200ms ease;
+  }
+  .link-quiet:hover,
+  .group:hover .link-quiet {
+    background-size: 100% 1px;
+  }
+
+  /* Draft-only TODO marker. Never appears in production builds. */
+  .todo {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--subtle);
+    border: 1px dashed var(--line-strong);
+    border-radius: 3px;
+    padding: 0.125rem 0.375rem;
+  }
+
+  .arrow {
+    display: inline-block;
+    transition: transform 250ms var(--ease);
+  }
+  .group:hover .arrow,
+  a:hover > .arrow {
+    transform: translateX(3px);
+  }
+  .group:hover .arrow-up,
+  a:hover > .arrow-up {
+    transform: translate(2px, -2px);
+  }
+
+  .kbd {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    line-height: 1;
+    color: var(--subtle);
+    border: 1px solid var(--line-strong);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: 0.2rem 0.35rem;
+    background: var(--bg-raised);
+  }
+
+  /* Cursor-following light on project media. --mx/--my set by ClientEffects. */
+  .spotlight {
+    --mx: 50%;
+    --my: 50%;
+  }
+  .spotlight::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: radial-gradient(
+      420px circle at var(--mx) var(--my),
+      var(--spot),
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 300ms ease;
+  }
+  .group:hover .spotlight::after {
+    opacity: 1;
+  }
+}
+
+/* Theme toggle icon: show the icon for the theme you'd switch TO. */
+.theme-icon-dark {
+  display: none;
+}
+:root[data-theme="dark"] .theme-icon-dark {
+  display: block;
+}
+:root[data-theme="dark"] .theme-icon-light {
+  display: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-icon-dark {
+    display: block;
+  }
+  :root:not([data-theme="light"]) .theme-icon-light {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Motion
+   --------------------------------------------------------------------------- */
+
+/* Name: letters rise in one after another on first paint. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.35em);
+    filter: blur(6px);
+  }
+}
+.rise {
+  display: inline-block;
+  animation: rise 700ms var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 35ms + 80ms);
+}
+
+/* Generic staggered fade-up for hero blocks. */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.fade-up {
+  animation: fade-up 700ms var(--ease) both;
+  animation-delay: calc(var(--d, 0) * 90ms + 250ms);
+}
+
+/* Scroll reveal. Only hides content once JS has marked <html class="js">,
+   so the page is fully visible without JavaScript. */
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(14px);
+  filter: blur(4px);
+  transition:
+    opacity 800ms var(--ease),
+    transform 800ms var(--ease),
+    filter 800ms var(--ease);
+  transition-delay: calc(var(--d, 0) * 80ms);
+}
+html.js [data-reveal][data-in] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* Scroll-driven entrance tied to position, not time (project cards). */
+@keyframes reveal-view {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+}
+@supports (animation-timeline: view()) {
+  .reveal-view {
+    animation: reveal-view linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 70%;
+  }
+}
+
+/* "Available" dot: a slow breathing ring. */
+@keyframes breathe {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  70%,
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+.breathe {
+  animation: breathe 2.6s ease-out infinite;
+}
+
+/* Blinking clock separator. */
+@keyframes blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+.blink {
+  animation: blink 1s steps(1) infinite;
+}
+
+/* Reading progress (project pages). CSS scroll-driven, zero JS. */
+@keyframes progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.read-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 2px;
+  z-index: 60;
+  background: var(--accent);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  animation: progress linear both;
+  animation-timeline: scroll(root);
+}
+@supports not (animation-timeline: scroll()) {
+  .read-progress {
+    display: none;
+  }
+}
+
+/* Header: hairline + backdrop appear once the page is scrolled. */
+.site-header {
+  transition:
+    background-color 300ms ease,
+    border-color 300ms ease,
+    backdrop-filter 300ms ease;
+}
+/* Only the standard property: the build adds -webkit- for Safari. Writing
+   both by hand made the optimizer keep just the prefixed one, which Chrome
+   ignores. */
+html[data-scrolled] .site-header {
+  background-color: color-mix(in srgb, var(--bg) 70%, transparent);
+  border-color: var(--line);
+  backdrop-filter: saturate(1.5) blur(16px);
+}
+
+/* Command palette entrance. */
+@keyframes palette-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.985);
+  }
+}
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+}
+.palette-in {
+  animation: palette-in 220ms var(--ease) both;
+}
+.overlay-in {
+  animation: overlay-in 200ms ease both;
+}
+
+/* ---------------------------------------------------------------------------
+   View transitions
+   --------------------------------------------------------------------------- */
+
+/* Project card image ⇄ project page hero. */
+::view-transition-group(.morph) {
+  animation-duration: 520ms;
+  animation-timing-function: var(--ease);
+}
+::view-transition-image-pair(.morph) {
+  animation-name: via-blur;
+}
+@keyframes via-blur {
+  30% {
+    filter: blur(2px);
+  }
+}
+
+/* Page content crossfade on navigation. */
+::view-transition-old(.page-exit) {
+  animation: 180ms ease-out both vt-fade reverse;
+}
+::view-transition-new(.page-enter) {
+  animation: 420ms var(--ease) 120ms both vt-rise;
+}
+@keyframes vt-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes vt-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* Theme switch: circular reveal (driven from ThemeToggle). */
+html.theme-switching::view-transition-old(root),
+html.theme-switching::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced motion: everything settles instantly.
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+  html.js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  .read-progress,
+  .reveal-view {
+    animation: none !important;
+  }
+  .read-progress {
+    display: none;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+

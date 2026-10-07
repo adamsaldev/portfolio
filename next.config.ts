@@ -3,7 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
-  partialPrefetching: true,
+  // Fully static site: project pages await params outside <Suspense>.
+  partialPrefetching: false,
   turbopack: {
     rules: {
       "*.css": {
