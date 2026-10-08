@@ -91,15 +91,35 @@ function Institution({ name, href, logo }: { name: string; href?: string; logo?:
   );
 }
 
-/** One datasheet row: mono label left, value right. */
-function Row({ label, children, d }: { label: string; children: ReactNode; d: number }) {
+/**
+ * One datasheet row: mono label left, value right.
+ * `inline` rows are a single fixed-height line with label and value centered,
+ * so they all come out the same height.
+ */
+function Row({
+  label,
+  children,
+  d,
+  inline = false,
+}: {
+  label: string;
+  children: ReactNode;
+  d: number;
+  inline?: boolean;
+}) {
   return (
     <div
-      className="fade-up group/row grid grid-cols-[6.5rem_1fr] gap-4 py-3 transition-colors duration-200"
+      className={`fade-up group/row grid grid-cols-[6.5rem_1fr] gap-4 py-3 transition-colors duration-200 ${
+        inline ? "items-center" : ""
+      }`}
       style={delay(d)}
     >
-      <dt className="label pt-[3px] transition-colors duration-200 group-hover/row:text-fg">{label}</dt>
-      <dd className="min-w-0 text-body leading-snug">{children}</dd>
+      <dt className={`label transition-colors duration-200 group-hover/row:text-fg ${inline ? "" : "pt-[3px]"}`}>
+        {label}
+      </dt>
+      <dd className={`min-w-0 text-body ${inline ? "flex h-5 items-center gap-2.5 leading-5" : "leading-snug"}`}>
+        {children}
+      </dd>
     </div>
   );
 }
@@ -193,26 +213,24 @@ export function Hero() {
             ) : null}
 
             {about.hobbies.length > 0 ? (
-              <Row label="Interests" d={4}>
+              <Row label="Interests" d={4} inline>
                 <span className="text-muted">{about.hobbies.join(", ")}</span>
               </Row>
             ) : null}
 
             {personal.timezone ? (
-              <Row label="Local time" d={5}>
+              <Row label="Local time" d={5} inline>
                 <LocalTime timeZone={personal.timezone} label={personal.timezoneLabel} />
               </Row>
             ) : null}
 
             {personal.availability ? (
-              <Row label="Status" d={6}>
-                <span className="inline-flex items-center gap-2.5">
-                  <span aria-hidden className="relative inline-flex size-1.5 shrink-0">
-                    <span className="breathe absolute inset-0 rounded-full bg-accent" />
-                    <span className="relative size-1.5 rounded-full bg-accent" />
-                  </span>
-                  {personal.availability}
+              <Row label="Status" d={6} inline>
+                <span aria-hidden className="relative inline-flex size-1.5 shrink-0">
+                  <span className="breathe absolute inset-0 rounded-full bg-accent" />
+                  <span className="relative size-1.5 rounded-full bg-accent" />
                 </span>
+                <span>{personal.availability}</span>
               </Row>
             ) : null}
           </dl>
