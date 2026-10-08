@@ -152,7 +152,7 @@ export interface EvolutionStage {
 export type ProjectStatus = "published" | "in-development" | "placeholder";
 
 export interface CaseStudySection {
-  /** Verified paragraphs. */
+  /** Verified paragraphs. `[label](https://…)` renders as an inline link. */
   body: string[];
   /** Prompts shown only in draft mode, telling you what to write. */
   todo?: string[];
@@ -548,7 +548,7 @@ export const projects: Project[] = [
       },
       hardware: {
         body: [
-          "The live version ran on a small tank robot built from a XiaoR Geek TH tank chassis kit, with an Orange Pi, a battery pack, and a Logitech webcam on top.",
+          "The live version ran on a small tank robot built from a [XiaoR Geek TH tank chassis kit](https://www.robotshop.com/products/xiaor-geek-xiaor-geek-th-tank-chassis-compatiable-arduino-raspberry-pi-robot-car-chassis-kit-with-dc-motor), with an [Orange Pi](http://www.orangepi.org/), a battery pack, and a [Logitech webcam](https://www.logitech.com/en-us/shop/c/webcams) on top.",
           "The Orange Pi didn't do any of the vision work. It ran a small live API that streamed the webcam feed to my computer, the computer ran the lane detection and worked out the movement commands, and those got sent back to the robot to drive it.",
           "The prototype had the webcam taped straight onto the chassis. For the final robot at the end of the class we 3D printed a stand for it. We were working with really cheap equipment, so the stand cut down the vibration and raised the camera up for a clearer view of the lines.",
         ],

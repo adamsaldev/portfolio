@@ -18,12 +18,26 @@ import { DraftNote } from "@/components/Todo";
 import { GitHubMark } from "@/components/GitHubMark";
 import { isDraft } from "@/lib/site";
 
+/** Renders `[label](https://…)` inside a paragraph as an external link. */
+function withLinks(text: string): ReactNode[] {
+  return text.split(/(\[[^\]]+\]\(https?:\/\/[^)\s]+\))/).map((part, i) => {
+    const m = part.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/);
+    if (!m) return part;
+    return (
+      <a key={i} href={m[2]} target="_blank" rel="noopener noreferrer" className="link text-fg">
+        {m[1]}
+        <span className="sr-only"> (opens in a new tab)</span>
+      </a>
+    );
+  });
+}
+
 function Prose({ paragraphs }: { paragraphs: string[] }) {
   if (paragraphs.length === 0) return null;
   return (
     <div className="max-w-[38rem] space-y-4 text-lead text-muted">
       {paragraphs.map((p) => (
-        <p key={p}>{p}</p>
+        <p key={p}>{withLinks(p)}</p>
       ))}
     </div>
   );
