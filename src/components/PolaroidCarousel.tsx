@@ -17,32 +17,67 @@ import type { Polaroid } from "@/data/portfolio";
 const TILTS = [-5, 4, -2, 6, -4, 3, -6, 2];
 const OFFSETS = [0, 14, -6, 10, -12, 6, 16, -4];
 
-/** Bare photo: rounded corners + the same thin translucent stroke as project cards. */
-function Frame({ p, large = false }: { p: Polaroid; large?: boolean }) {
+// The card and the focused view both render the small size first, so the
+// focused view always starts from an image that's already in the cache.
+const SMALL_SIZES = "200px";
+const LARGE_SIZES = "(min-width: 640px) 440px, 86vw";
+
+/** 15% white hairline drawn on the inside edge of the photo. */
+function InnerStroke() {
   return (
-    <div
-      className={`relative aspect-[5/6] overflow-hidden border border-line bg-panel ${
-        large
-          ? "rounded-2xl shadow-[0_30px_80px_-24px_rgb(0_0_0/0.7)]"
-          : "rounded-xl shadow-[0_10px_24px_-12px_rgb(0_0_0/0.5)]"
-      }`}
-    >
+    <span
+      aria-hidden
+      className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.15)]"
+    />
+  );
+}
+
+/** Small photo in the pile. */
+function Card({ p }: { p: Polaroid }) {
+  return (
+    <div className="relative aspect-[5/6] overflow-hidden rounded-xl bg-panel shadow-[0_10px_24px_-12px_rgb(0_0_0/0.5)]">
+      <Image src={p.src} alt={p.alt} fill sizes={SMALL_SIZES} className="object-cover" draggable={false} />
+      <InnerStroke />
+    </div>
+  );
+}
+
+/**
+ * Focused photo. First paints the exact file the card already shows (read from
+ * the card's <img>, so it's in memory and the zoom animation always lands on a
+ * real photo), then fades in the sharp, larger version on top.
+ */
+function Focused({ p, preview }: { p: Polaroid; preview: string | null }) {
+  const [sharp, setSharp] = useState(false);
+  return (
+    <div className="relative aspect-[5/6] overflow-hidden rounded-2xl bg-panel shadow-[0_30px_80px_-24px_rgb(0_0_0/0.7)]">
+      {preview ? (
+        // eslint-disable-next-line @next/next/no-img-element -- must reuse the card's already-loaded file verbatim
+        <img src={preview} alt={p.alt} className="absolute inset-0 h-full w-full object-cover" draggable={false} />
+      ) : (
+        <Image src={p.src} alt={p.alt} fill sizes={SMALL_SIZES} loading="eager" className="object-cover" draggable={false} />
+      )}
       <Image
         src={p.src}
-        alt={p.alt}
+        alt=""
+        aria-hidden
         fill
-        sizes={large ? "(min-width: 640px) 440px, 86vw" : "200px"}
-        className="object-cover"
+        sizes={LARGE_SIZES}
+        loading="eager"
+        onLoad={() => setSharp(true)}
+        className={`object-cover transition-opacity duration-300 ${sharp ? "opacity-100" : "opacity-0"}`}
         draggable={false}
       />
+      <InnerStroke />
     </div>
   );
 }
 
 /**
  * A messy, overlapping pile of tilted photos. They drop in when scrolled into
- * view, lift on hover, and open into a focused view on click (shared-element morph via
- * React <ViewTransition>). Arrow keys navigate; Esc / backdrop closes.
+ * view, lift on hover, and open into a focused view on click (shared-element
+ * morph via React <ViewTransition>). In the focused view: arrow keys, buttons,
+ * or swipe to step; Esc, the close button, or the backdrop to close.
  */
 export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
   const [focused, setFocused] = useState<number | null>(null);
@@ -51,8 +86,17 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
   const [stepped, setStepped] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLUListElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
-  const lastCard = useRef<HTMLButtonElement | null>(null);
+  const cardRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const swipeX = useRef<number | null>(null);
+  // The file a card is currently showing (if loaded) — read in event handlers
+  // only, and kept in state, for an instant first frame in the focused view.
+  const [preview, setPreview] = useState<string | null>(null);
+  const previewFor = useCallback((i: number) => {
+    const img = cardRefs.current[i]?.querySelector("img");
+    return img && img.complete && img.naturalWidth > 0 ? img.currentSrc : null;
+  }, []);
   const [canScroll, setCanScroll] = useState({ left: false, right: false });
 
   // Drop-in once visible.
@@ -91,45 +135,81 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
     };
   }, []);
 
-  const open = (i: number, el: HTMLButtonElement) => {
-    lastCard.current = el;
+  const open = (i: number) => {
+    const src = previewFor(i);
     startTransition(() => {
       setStepped(false);
+      setPreview(src);
       setFocused(i);
     });
   };
+
   const close = useCallback(() => {
+    const i = focused;
     startTransition(() => setFocused(null));
-    requestAnimationFrame(() => lastCard.current?.focus({ preventScroll: true }));
-  }, []);
+    // Return focus to the photo that's now showing (the one you last viewed).
+    if (i !== null) requestAnimationFrame(() => cardRefs.current[i]?.focus({ preventScroll: true }));
+  }, [focused]);
+
   const step = useCallback(
     (d: number) => {
+      if (focused === null) return;
+      const n = (focused + d + photos.length) % photos.length;
       setStepped(true);
-      setFocused((f) => (f === null ? f : (f + d + photos.length) % photos.length));
+      setPreview(previewFor(n));
+      setFocused(n);
     },
-    [photos.length],
+    [focused, photos.length, previewFor],
   );
 
-  // Lightbox: keys, scroll lock, focus.
+  // Focused view: keys, focus trap, scroll lock (without layout shift).
   useEffect(() => {
     if (focused === null) return;
     closeRef.current?.focus({ preventScroll: true });
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
-      else if (e.key === "ArrowRight") step(1);
-      else if (e.key === "ArrowLeft") step(-1);
+      if (e.key === "Escape") {
+        e.preventDefault();
+        close();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        step(1);
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        step(-1);
+      } else if (e.key === "Tab") {
+        const els = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>("button") ?? []);
+        if (els.length === 0) return;
+        const idx = els.indexOf(document.activeElement as HTMLElement);
+        const next = e.shiftKey ? (idx <= 0 ? els.length - 1 : idx - 1) : idx === els.length - 1 ? 0 : idx + 1;
+        e.preventDefault();
+        els[next].focus();
+      }
     };
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const html = document.documentElement;
+    const gutter = window.innerWidth - html.clientWidth;
+    const prev = { overflow: html.style.overflow, pr: html.style.paddingRight };
+    html.style.overflow = "hidden";
+    if (gutter > 0) html.style.paddingRight = `${gutter}px`;
     addEventListener("keydown", onKey);
     return () => {
-      document.body.style.overflow = prev;
+      html.style.overflow = prev.overflow;
+      html.style.paddingRight = prev.pr;
       removeEventListener("keydown", onKey);
     };
   }, [focused, close, step]);
 
-  const scrollBy = (d: number) =>
-    trackRef.current?.scrollBy({ left: d * 220, behavior: "smooth" });
+  // Swipe left/right on the focused photo (touch + pen + mouse drag).
+  const onPointerDown = (e: React.PointerEvent) => {
+    swipeX.current = e.clientX;
+  };
+  const onPointerUp = (e: React.PointerEvent) => {
+    if (swipeX.current === null) return;
+    const dx = e.clientX - swipeX.current;
+    swipeX.current = null;
+    if (Math.abs(dx) > 48) step(dx < 0 ? 1 : -1);
+  };
+
+  const scrollBy = (d: number) => trackRef.current?.scrollBy({ left: d * 220, behavior: "smooth" });
 
   return (
     <div ref={rootRef} className="relative">
@@ -138,30 +218,37 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
         className="-mx-5 flex snap-x snap-mandatory overflow-x-auto px-5 pt-10 pb-14 [justify-content:safe_center] [mask-image:linear-gradient(to_right,transparent,black_2.5rem,black_calc(100%-2.5rem),transparent)] [scrollbar-width:none] sm:-mx-8 sm:px-8 [&::-webkit-scrollbar]:hidden"
       >
         {photos.map((p, i) => {
-          const tilt = TILTS[i % TILTS.length];
-          const offset = OFFSETS[i % OFFSETS.length];
           const isFocused = focused === i;
           return (
             <li
               key={p.src}
               className={`polaroid-card w-40 shrink-0 snap-center not-first:-ml-10 sm:w-44 sm:not-first:-ml-12 ${inView ? "is-in" : ""}`}
-              style={{ "--r": `${tilt}deg`, "--y": `${offset}px`, "--i": i } as CSSProperties}
+              style={
+                {
+                  "--r": `${TILTS[i % TILTS.length]}deg`,
+                  "--y": `${OFFSETS[i % OFFSETS.length]}px`,
+                  "--i": i,
+                } as CSSProperties
+              }
             >
               <button
+                ref={(el) => {
+                  cardRefs.current[i] = el;
+                }}
                 type="button"
-                onClick={(e) => open(i, e.currentTarget)}
+                onClick={() => open(i)}
                 aria-label={`Open photo ${i + 1} of ${photos.length}`}
-                className="block w-full cursor-zoom-in rounded-2xl outline-offset-4"
+                className="block w-full cursor-zoom-in touch-manipulation rounded-xl outline-offset-4"
               >
                 {isFocused ? (
-                  // Keep the slot; the photo is "lifted" into the lightbox.
+                  // Keep the slot; the photo is "lifted" into the focused view.
                   <div className="opacity-0">
-                    <Frame p={p} />
+                    <Card p={p} />
                   </div>
                 ) : (
                   <ViewTransition name={`polaroid-${i}`} share="morph" default="none">
                     <div>
-                      <Frame p={p} />
+                      <Card p={p} />
                     </div>
                   </ViewTransition>
                 )}
@@ -194,19 +281,31 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
       {/* Focused view */}
       {focused !== null ? (
         <div
+          ref={dialogRef}
           role="dialog"
           aria-modal="true"
           aria-label={`Photo ${focused + 1} of ${photos.length}`}
           className="fixed inset-0 z-[95] flex items-center justify-center p-4"
         >
-          <div className="overlay-in absolute inset-0 bg-[rgb(0_0_0/0.72)] backdrop-blur-sm" onClick={close} aria-hidden />
+          <div
+            className="overlay-in absolute inset-0 bg-[rgb(0_0_0/0.72)] backdrop-blur-sm"
+            onClick={close}
+            aria-hidden
+          />
 
-          <div className="relative w-[min(86vw,27.5rem,calc((100dvh-9rem)*0.76))]">
-            <ViewTransition name={`polaroid-${focused}`} share="morph" default="none">
-              <div key={focused} className={stepped ? "polaroid-swap" : ""}>
-                <Frame p={photos[focused]} large />
-              </div>
-            </ViewTransition>
+          <div className="relative w-[min(86vw,27.5rem,calc((100dvh-9rem)*0.8))]">
+            <div
+              className="touch-pan-y select-none"
+              onPointerDown={onPointerDown}
+              onPointerUp={onPointerUp}
+              onPointerCancel={() => (swipeX.current = null)}
+            >
+              <ViewTransition name={`polaroid-${focused}`} share="morph" default="none">
+                <div key={focused} className={stepped ? "polaroid-swap" : ""}>
+                  <Focused p={photos[focused]} preview={preview} />
+                </div>
+              </ViewTransition>
+            </div>
 
             <div className="mt-4 flex items-center justify-between text-[rgb(255_255_255/0.85)]">
               <button
@@ -217,7 +316,7 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
               >
                 <ChevronLeft aria-hidden className="size-4" strokeWidth={1.75} />
               </button>
-              <span className="font-mono text-meta tabular-nums">
+              <span className="font-mono text-meta tabular-nums" aria-live="polite">
                 {focused + 1} / {photos.length}
               </span>
               <button

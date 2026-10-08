@@ -263,8 +263,14 @@ p {
   transform: translateY(var(--y, 0px)) rotate(var(--r, 0deg));
   transition: transform 450ms var(--ease);
 }
-.polaroid-card:hover,
-.polaroid-card:focus-within {
+/* Lift on real hover (not sticky after a tap) or keyboard focus (not after a click). */
+@media (hover: hover) {
+  .polaroid-card:hover {
+    z-index: 20;
+    transform: translateY(calc(var(--y, 0px) - 12px)) rotate(0deg) scale(1.06);
+  }
+}
+.polaroid-card:has(:focus-visible) {
   z-index: 20;
   transform: translateY(calc(var(--y, 0px) - 12px)) rotate(0deg) scale(1.06);
 }
