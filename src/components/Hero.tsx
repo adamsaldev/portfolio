@@ -194,7 +194,7 @@ export function Hero() {
 
             {about.hobbies.length > 0 ? (
               <Row label="Interests" d={4}>
-                <span className="text-muted">{about.hobbies.join(" · ")}</span>
+                <span className="text-muted">{about.hobbies.join(", ")}</span>
               </Row>
             ) : null}
 
