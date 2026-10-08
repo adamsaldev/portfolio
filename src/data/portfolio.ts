@@ -741,6 +741,8 @@ export const projects: Project[] = [
 // ---------------------------------------------------------------------------
 
 export const about = {
+  /** Personal interests, shown in the intro's "Interests" row. */
+  hobbies: ["Piano", "Art", "Football"],
   // TODO(PORTFOLIO): Rewrite in your own voice. Keep it to two short
   // paragraphs and only include things that are true today.
   paragraphs: [

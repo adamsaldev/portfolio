@@ -192,9 +192,11 @@ export function Hero() {
               </Row>
             ) : null}
 
-            <Row label="Focus" d={4}>
-              <span className="text-muted">{about.interests.map((i) => i.area).join(" · ")}</span>
-            </Row>
+            {about.hobbies.length > 0 ? (
+              <Row label="Interests" d={4}>
+                <span className="text-muted">{about.hobbies.join(" · ")}</span>
+              </Row>
+            ) : null}
 
             {personal.timezone ? (
               <Row label="Local time" d={5}>
