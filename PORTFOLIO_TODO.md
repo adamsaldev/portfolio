@@ -10,7 +10,7 @@ Find every marker in code with: `grep -rn "TODO(PORTFOLIO)" src public`
 
 - [ ] Location, optional → `personal.location`
 - [ ] Confirm the time zone for the live clock (currently `America/New_York`, "ET") → `personal.timezone`. Set it to `null` to hide the clock.
-- [ ] Headshot (square) → `public/headshot.jpg`. The intro shows no photo until the file exists.
+- [x] Headshot → `public/headshot.jpg`
 - [ ] Confirm the UF start year (currently `2026`) → `education[0].start`
 - [ ] Optional verified details for the Now section (relevant coursework, honors) → `education[0].details`
 - [ ] Confirm the availability line "Seeking software engineering internships" → `personal.availability` (set to `null` to hide)
