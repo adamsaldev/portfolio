@@ -359,11 +359,10 @@ export const projects: Project[] = [
       demo: PENDING,
     },
     media: {
-      // TODO(PORTFOLIO): Replace Varsity hero screenshot
       hero: {
-        src: "/projects/varsity/hero.png",
+        src: "/projects/varsity/hero.jpg",
         label: "Varsity — Hero Screenshot",
-        alt: "Varsity app overview", // TODO(PORTFOLIO): describe the real screenshot
+        alt: "Two Varsity screens under a large VARSITY wordmark: a final Ohio State vs. Texas game with the quarter-by-quarter score and team stats, and a player page for Ole Miss running back Kewan Lacy",
         frame: "wide",
       },
       gallery: [
