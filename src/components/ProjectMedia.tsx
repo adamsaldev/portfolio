@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { LoopVideo } from "@/components/LoopVideo";
 import type { MediaAsset, MediaFrame } from "@/data/portfolio";
 import { isDraft, isVideo, publicFileExists } from "@/lib/site";
 
@@ -73,16 +74,7 @@ export function ProjectMedia({
   if (isVideo(asset.src)) {
     return (
       <div className={frame}>
-        <video
-          src={asset.src}
-          poster={asset.poster}
-          controls
-          muted
-          playsInline
-          preload="metadata"
-          aria-label={asset.alt}
-          className="absolute inset-0 h-full w-full object-cover"
-        />
+        <LoopVideo src={asset.src} poster={asset.poster} label={asset.alt} />
       </div>
     );
   }

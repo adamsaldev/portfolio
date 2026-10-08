@@ -51,8 +51,8 @@ Find every marker in code with: `grep -rn "TODO(PORTFOLIO)" src public`
 
 ## Autonomous Vision & Robot Control
 
-- [ ] Hero image or recording (16:9). This is also the card image → `public/projects/autonomous-vision/autonomous-vision-hero.png`
-- [ ] Real frame of the lane-detection overlay → `public/projects/autonomous-vision/lane-detection-output.png`
+- [x] Hero / card image → `public/projects/autonomous-vision/autonomous-vision-hero.jpg` (pipeline output on a sample dashcam clip)
+- [x] Lane-detection clip → `public/projects/autonomous-vision/lane-detection-output.mp4` (8s loop)
 - [ ] Screenshot of the Tkinter control panel → `public/projects/autonomous-vision/robot-control-interface.png`
 - [ ] Real `alt` text for the images above
 - [ ] Role → `projects[1].role` (year set: 2024)

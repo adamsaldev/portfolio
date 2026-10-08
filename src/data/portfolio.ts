@@ -486,19 +486,18 @@ export const projects: Project[] = [
       },
     ],
     media: {
-      // TODO(PORTFOLIO): Add autonomous-vision hero image or recording
       hero: {
-        src: "/projects/autonomous-vision/autonomous-vision-hero.png",
+        src: "/projects/autonomous-vision/autonomous-vision-hero.jpg",
         label: "Autonomous Vision — Hero",
-        alt: "Autonomous vision project", // TODO(PORTFOLIO): describe the real image
+        alt: "Dashcam view of a highway at sunset with the detected lane lines drawn in cyan and the estimated lane center in red",
         frame: "wide",
       },
       gallery: [
-        // TODO(PORTFOLIO): Add a real frame of the lane-detection overlay
         {
-          src: "/projects/autonomous-vision/lane-detection-output.png",
+          src: "/projects/autonomous-vision/lane-detection-output.mp4",
+          poster: "/projects/autonomous-vision/lane-detection-poster.jpg",
           label: "Lane Detection Output",
-          alt: "Lane-detection overlay on road video", // TODO(PORTFOLIO): describe the real image
+          alt: "Looping clip of the lane-detection overlay tracking both lane lines on a highway",
           frame: "desktop",
         },
         // TODO(PORTFOLIO): Add a screenshot of the Tkinter control panel
@@ -534,6 +533,7 @@ export const projects: Project[] = [
           "First I crop each frame, pick out the yellow lane lines by color, and warp it so it's like looking down at the road from above. Then it goes grayscale, Canny finds the edges, and a Hough transform turns those edges into line segments.",
           "Next I toss out lines that aren't close to vertical and split the rest into left and right lanes based on where they are. Averaging each side gives me the lane lines plus a center line, and where that center line sits decides the turn call. Last step, the overlay gets warped back to the normal view and shown in the app.",
           "The live robot version runs a simpler take on this on the camera feed: grayscale, blur, Canny, Hough, and a slope filter.",
+          "The demo footage here is a sample dashcam clip, not my original road video — I recalibrated the four perspective points for that camera, and everything else is the pipeline as written.",
         ],
       },
       challenges: {
