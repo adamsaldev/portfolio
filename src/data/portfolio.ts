@@ -762,7 +762,7 @@ export const about = {
 // ---------------------------------------------------------------------------
 
 export interface Polaroid {
-  /** Path under /public. Portrait photos look best (shown at 4:5). */
+  /** Path under /public. Portrait photos look best (shown at 5:6). */
   src: string;
   alt: string;
   /** Optional handwritten caption on the polaroid's bottom strip. */

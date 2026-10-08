@@ -16,16 +16,20 @@ import type { Polaroid } from "@/data/portfolio";
 // Resting tilt per card (degrees), repeated for longer lists.
 const TILTS = [-4, 3, -2, 4, -3, 2];
 
+/**
+ * Polaroid frame. Corners are concentric: outer radius = photo radius + side
+ * padding (both set as CSS variables below, so they can't drift apart).
+ */
 function Frame({ p, large = false }: { p: Polaroid; large?: boolean }) {
   return (
     <div
-      className={`bg-[#fbfbf8] shadow-[0_1px_2px_rgb(0_0_0/0.12),0_12px_28px_-10px_rgb(0_0_0/0.35)] ${
-        large ? "rounded-2xl p-3.5 pb-14 sm:p-4 sm:pb-16" : "rounded-xl p-2 pb-9"
+      className={`rounded-[calc(var(--r-in)+var(--pad))] bg-[#fbfbf8] p-[var(--pad)] shadow-[0_1px_2px_rgb(0_0_0/0.12),0_12px_28px_-10px_rgb(0_0_0/0.35)] ${
+        large
+          ? "pb-14 [--pad:14px] [--r-in:12px] sm:pb-16 sm:[--pad:16px]"
+          : "pb-9 [--pad:8px] [--r-in:8px]"
       }`}
     >
-      <div
-        className={`relative aspect-[4/5] overflow-hidden bg-[#e9e9e4] ${large ? "rounded-xl" : "rounded-lg"}`}
-      >
+      <div className="relative aspect-[5/6] overflow-hidden rounded-[var(--r-in)] bg-[#e9e9e4]">
         <Image
           src={p.src}
           alt={p.alt}
@@ -159,7 +163,7 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
                 type="button"
                 onClick={(e) => open(i, e.currentTarget)}
                 aria-label={`Open photo ${i + 1} of ${photos.length}${p.caption ? `: ${p.caption}` : ""}`}
-                className="block w-full cursor-zoom-in rounded-xl outline-offset-4"
+                className="block w-full cursor-zoom-in rounded-2xl outline-offset-4"
               >
                 {isFocused ? (
                   // Keep the slot; the photo is "lifted" into the lightbox.
@@ -209,7 +213,7 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
         >
           <div className="overlay-in absolute inset-0 bg-[rgb(0_0_0/0.72)] backdrop-blur-sm" onClick={close} aria-hidden />
 
-          <div className="relative w-[min(86vw,27.5rem,calc((100dvh-9rem)*0.74))]">
+          <div className="relative w-[min(86vw,27.5rem,calc((100dvh-9rem)*0.76))]">
             <ViewTransition name={`polaroid-${focused}`} share="morph" default="none">
               <div key={focused} className={stepped ? "polaroid-swap" : ""}>
                 <Frame p={photos[focused]} large />
