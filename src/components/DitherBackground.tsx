@@ -13,12 +13,12 @@ import { useEffect, useRef } from "react";
  * user prefers reduced motion; renders nothing if WebGL2 is unavailable.
  */
 const SETTINGS = {
-  waveColor: [0.5803921568627451, 0.37254901960784315, 0.06274509803921569] as const,
+  waveColor: [0.5, 0.5, 0.5] as const, // neutral grey
   waveSpeed: 0.02,
   waveFrequency: 3,
   waveAmplitude: 0.19,
   colorNum: 13.1,
-  pixelSize: 2, // in device pixels, like the original
+  pixelSize: 4, // dither cell size in device pixels (original default: 2)
   fps: 30,
 };
 
