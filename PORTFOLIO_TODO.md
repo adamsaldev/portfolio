@@ -60,12 +60,12 @@ Find every marker in code with: `grep -rn "TODO(PORTFOLIO)" src public`
 
 ## Distributed Binary Data Sorter
 
-- [ ] Hero image (16:9), for example an architecture image or a photo of the setup. This is also the card image → `public/projects/distributed-sorter/distributed-sorter-architecture.png`
+- [x] Hero / card image → `public/projects/distributed-sorter/run-summary.jpg`. Optional retake: this screenshot shows 999,900 sorted because 1,000,000 ÷ 150 chunks doesn't divide evenly. `run.sh` now defaults to 160 chunks, so a retake shows 1,000,000 on both lines.
 - [ ] Recording of a multinode run → `public/projects/distributed-sorter/multinode-demo.mp4`
 - [ ] Screenshot of real terminal output → `public/projects/distributed-sorter/terminal-output.png`
 - [ ] Real `alt` text for the media above
 - [ ] Role → `projects[2].role` (year set: 2026)
-- [ ] Optional: measured timings, v1 vs. the binary version on the same input → `projects[2].caseStudy.performance.metrics`
+- [x] Measured comparison (3 setups, 1M numbers) → `projects[2].caseStudy.performance.comparison`. Re-run it with `~/Desktop/sort-demo/bench/bench.py`.
 - [ ] What I learned → `projects[2].caseStudy.learned`
 
 ## Experience

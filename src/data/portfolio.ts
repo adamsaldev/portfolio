@@ -102,6 +102,30 @@ export interface Metric {
   label: string;
 }
 
+/** One measured approach in a timing comparison. */
+export interface ComparisonRow {
+  label: string;
+  /** Short description of how it works. */
+  detail: string;
+  /** Seconds; the median of `trials`. */
+  median: number;
+  /** Every measured run, in seconds. */
+  trials: number[];
+  /** The project's own approach — drawn in the accent color. */
+  highlight?: boolean;
+  /** Reference row other rows are compared against in the tooltip. */
+  baseline?: boolean;
+}
+
+/** A measured timing comparison (real runs only — never estimates). */
+export interface Comparison {
+  title: string;
+  /** How it was measured: data, machine, settings. */
+  setup: string;
+  rows: ComparisonRow[];
+  note?: string;
+}
+
 /** A source repository shown on a project's detail page. */
 export interface Repository {
   label: string;
@@ -145,7 +169,7 @@ export interface CaseStudy {
     caption?: string;
   };
   evolution?: CaseStudySection & { stages: EvolutionStage[] };
-  performance?: CaseStudySection & { metrics: Metric[] };
+  performance?: CaseStudySection & { metrics: Metric[]; comparison?: Comparison };
   challenges?: CaseStudySection & { items: { title: string; body: string }[] };
   learned?: CaseStudySection;
 }
@@ -596,11 +620,10 @@ export const projects: Project[] = [
       },
     ],
     media: {
-      // TODO(PORTFOLIO): Add distributed-sorter hero (architecture image or photo of the setup)
       hero: {
-        src: "/projects/distributed-sorter/distributed-sorter-architecture.png",
-        label: "Distributed Sorter — Architecture",
-        alt: "Distributed sorter architecture", // TODO(PORTFOLIO): describe the real image
+        src: "/projects/distributed-sorter/run-summary.jpg",
+        label: "Distributed Sorter — Run Summary",
+        alt: "Terminal output of a local run: a 1,000,000-number input split into 150 binary chunks, each chunk sorted and merged as it comes back, ending in a summary of 999,900 numbers sorted in 17.28 seconds",
         frame: "wide",
       },
       gallery: [
@@ -680,10 +703,40 @@ export const projects: Project[] = [
         ],
       },
       performance: {
-        // TODO(PORTFOLIO): Add measured timings (v1 vs. binary-optimized) if you have them.
         metrics: [],
-        body: [],
-        todo: ["TODO: ADD VERIFIED PERFORMANCE METRIC — e.g. total time for v1 vs. the binary version on the same input."],
+        // Measured on 2026-10-07 with ~/Desktop/sort-demo/bench/bench.py (results.json there).
+        comparison: {
+          title: "Sorting 1,000,000 numbers, three ways",
+          setup:
+            "Same 1,000,000 random integers, 160 chunks, all on my MacBook Pro (14 cores) acting as both coordinator and worker. Median of 3 runs (the one-process run ran once). Every output was checked: sorted, nothing missing.",
+          rows: [
+            {
+              label: "Python sorted()",
+              detail: "Built-in sort, one process — reference",
+              median: 0.34,
+              trials: [0.35, 0.34, 0.34],
+              baseline: true,
+            },
+            {
+              label: "Binary pipeline, distributed",
+              detail: "Bubble sort on workers, binary merges",
+              median: 19.0,
+              trials: [18.59, 19.0, 19.28],
+              highlight: true,
+            },
+            {
+              label: "Binary pipeline, one process",
+              detail: "Same pipeline, chunks sorted one at a time",
+              median: 106.35,
+              trials: [106.35],
+            },
+          ],
+          note: "Distributed times start once the cluster is up.",
+        },
+        body: [
+          "I timed three setups on the same million numbers on my laptop. Spreading the work across 14 cores made the pipeline about 5.6× faster than running it in one process — 106 seconds down to 19.",
+          "Python's built-in sorted() still beats both at 0.34 seconds. The workers use bubble sort, so the interesting part here is the pipeline, not the sorting algorithm.",
+        ],
       },
       learned: {
         // TODO(PORTFOLIO): Add what you learned building this.

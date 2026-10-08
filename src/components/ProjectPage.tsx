@@ -3,6 +3,7 @@ import { ViewTransition, type ReactNode } from "react";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import type { CaseStudySection, EvolutionStage, Project, Repository } from "@/data/portfolio";
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
+import { ComparisonChart } from "@/components/ComparisonChart";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { ProjectMedia, mediaVisible } from "@/components/ProjectMedia";
@@ -283,8 +284,9 @@ export function ProjectPage({ project, next }: { project: Project; next?: Projec
               id="performance"
               label="Performance"
               section={cs.performance}
-              show={(cs.performance?.metrics.length ?? 0) > 0}
+              show={(cs.performance?.metrics.length ?? 0) > 0 || !!cs.performance?.comparison}
             >
+              {cs.performance?.comparison ? <ComparisonChart data={cs.performance.comparison} /> : null}
               {cs.performance && cs.performance.metrics.length > 0 ? (
                 <dl className="grid grid-cols-2 gap-6 sm:grid-cols-3">
                   {cs.performance.metrics.map((m) => (
