@@ -20,7 +20,7 @@ const SETTINGS = {
   colorNum: 13.1,
   pixelSize: 4, // dither cell size in device pixels (original default: 2)
   fps: 30,
-  opacity: 0.33, // overall strength of the background (0–1)
+  // Opacity is per theme — see .dither-canvas in globals.css.
 };
 
 const VERT = `#version 300 es
@@ -225,8 +225,7 @@ export function DitherBackground({ className = "" }: { className?: string }) {
     <canvas
       ref={ref}
       aria-hidden
-      className={`block h-full w-full [image-rendering:pixelated] ${className}`}
-      style={{ opacity: SETTINGS.opacity }}
+      className={`dither-canvas block h-full w-full [image-rendering:pixelated] ${className}`}
     />
   );
 }

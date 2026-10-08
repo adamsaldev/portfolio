@@ -242,6 +242,19 @@ p {
   }
 }
 
+/* Hero dither background strength: 66% on light, 33% on dark. */
+.dither-canvas {
+  opacity: 0.66;
+}
+:root[data-theme="dark"] .dither-canvas {
+  opacity: 0.33;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .dither-canvas {
+    opacity: 0.33;
+  }
+}
+
 /* Theme toggle icon: show the icon for the theme you'd switch TO. */
 .theme-icon-dark {
   display: none;
