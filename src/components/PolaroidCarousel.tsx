@@ -148,7 +148,7 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
     <div ref={rootRef} className="relative">
       <ul
         ref={trackRef}
-        className="-mx-5 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pt-6 pb-10 [justify-content:safe_center] [scrollbar-width:none] sm:-mx-8 sm:gap-8 sm:px-8 [&::-webkit-scrollbar]:hidden"
+        className="-mx-5 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pt-6 pb-10 [justify-content:safe_center] [mask-image:linear-gradient(to_right,transparent,black_2.5rem,black_calc(100%-2.5rem),transparent)] [scrollbar-width:none] sm:-mx-8 sm:gap-8 sm:px-8 [&::-webkit-scrollbar]:hidden"
       >
         {photos.map((p, i) => {
           const tilt = TILTS[i % TILTS.length];

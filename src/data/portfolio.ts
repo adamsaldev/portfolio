@@ -778,6 +778,30 @@ export const polaroids: Polaroid[] = [
     src: "/polaroids/02.jpg",
     alt: "Fisheye shot of me and another player standing by a stage at an outdoor football event",
   },
+  {
+    src: "/polaroids/03.jpg",
+    alt: "On stage holding a first-place Tell the Story award, shown on a big screen",
+  },
+  {
+    src: "/polaroids/04.jpg",
+    alt: "Standing in front of the Lincoln Memorial statue at night",
+  },
+  {
+    src: "/polaroids/05.jpg",
+    alt: "Two friends in white button-up shirts posing together at a party",
+  },
+  {
+    src: "/polaroids/06.jpg",
+    alt: "Holding gavels and a Best Delegate certificate at ILMUNC XLII, a Model UN conference",
+  },
+  {
+    src: "/polaroids/07.jpg",
+    alt: "Night street photo in front of lit-up downtown towers and palm trees",
+  },
+  {
+    src: "/polaroids/08.jpg",
+    alt: "Walking down a neon-lit hallway past a glowing Gossip Wall sign",
+  },
 ];
 
 // ---------------------------------------------------------------------------
