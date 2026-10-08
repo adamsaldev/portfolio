@@ -540,7 +540,8 @@ export const projects: Project[] = [
           "First I crop each frame, pick out the yellow lane lines by color, and warp it so it's like looking down at the road from above. Then it goes grayscale, Canny finds the edges, and a Hough transform turns those edges into line segments.",
           "Next I toss out lines that aren't close to vertical and split the rest into left and right lanes based on where they are. Averaging each side gives me the lane lines plus a center line, and where that center line sits decides the turn call. Last step, the overlay gets warped back to the normal view and shown in the app.",
           "The live robot version runs a simpler take on this on the camera feed: grayscale, blur, Canny, Hough, and a slope filter.",
-          "The demo footage here is two dashcam clips (a sunset highway and a night drive), not my original road video — I recalibrated the four perspective points for each camera, and everything else is the pipeline as written.",
+          "The demo footage here is two dashcam clips (a sunset highway and a night drive), not my original road video. The sunset clip runs the pipeline as written, with the four perspective points recalibrated for that camera.",
+          "The night drive needed more, so I upgraded the pipeline: instead of hardcoding the perspective window, it finds where the lane lines meet (the vanishing point) and builds the window from that, re-checking every few frames. Each lane is only searched for near where it was last frame, and a median over the last few detections plus smoothing means a bad frame or two can't make the lines jump. If one lane drops out, it's filled in from the other using the remembered lane width.",
         ],
       },
       challenges: {
