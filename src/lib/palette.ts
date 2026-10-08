@@ -21,7 +21,6 @@ export function paletteItems(): PaletteItem[] {
   items.push(
     { id: "nav-home", group: "Navigate", label: "Home", href: "/" },
     { id: "nav-work", group: "Navigate", label: "Projects", href: "/#work", keywords: "work engineering" },
-    { id: "nav-about", group: "Navigate", label: "About", href: "/#about", keywords: "interests" },
     { id: "nav-contact", group: "Navigate", label: "Contact", href: "/#contact", keywords: "email hire" },
   );
 

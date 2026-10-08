@@ -216,11 +216,6 @@ export interface Project {
   caseStudy?: CaseStudy;
 }
 
-export interface Interest {
-  area: string;
-  note: string;
-}
-
 // ---------------------------------------------------------------------------
 // Personal
 // ---------------------------------------------------------------------------
@@ -268,7 +263,6 @@ export const socials = {
 export const navigation = {
   sections: [
     { label: "Projects", href: "/#work" },
-    { label: "About", href: "/#about" },
   ],
 } as const;
 
@@ -843,24 +837,12 @@ export const projects: Project[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// About
+// About — hobbies shown in the intro
 // ---------------------------------------------------------------------------
 
 export const about = {
   /** Personal interests, shown in the intro's "Interests" row. */
   hobbies: ["Piano", "Art", "Football"],
-  // TODO(PORTFOLIO): Rewrite in your own voice. Keep it to two short
-  // paragraphs and only include things that are true today.
-  paragraphs: [
-    "I like building software that deals with live, messy data — the biggest one being Varsity, an app that pulls college sports data from a bunch of sources into one place.",
-    "Lately I've been getting into the lower-level stuff — systems programming, parallel computing, and figuring out what actually makes code fast.",
-  ],
-  interests: [
-    { area: "Systems", note: "Processes, memory, and operating system interfaces" },
-    { area: "Performance", note: "Profiling, benchmarking, and optimization" },
-    { area: "Parallel computing", note: "CPU and GPU execution models" },
-    { area: "Mobile", note: "Native apps built on live data" },
-  ] satisfies Interest[],
 };
 
 // ---------------------------------------------------------------------------
