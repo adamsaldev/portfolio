@@ -504,7 +504,7 @@ export const projects: Project[] = [
           src: "/projects/autonomous-vision/night-drive-output.mp4",
           poster: "/projects/autonomous-vision/night-drive-poster.jpg",
           label: "Night Drive",
-          alt: "Looping clip of the lane-detection overlay tracking the lane lines on a highway at night",
+          alt: "Looping clip of the lane-detection overlay tracking the lane lines through tunnels and highway at night",
           frame: "desktop",
         },
         // TODO(PORTFOLIO): Add a screenshot of the Tkinter control panel
