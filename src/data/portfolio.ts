@@ -758,6 +758,29 @@ export const about = {
 };
 
 // ---------------------------------------------------------------------------
+// Polaroids — photo row at the bottom of the home page
+// ---------------------------------------------------------------------------
+
+export interface Polaroid {
+  /** Path under /public. Portrait photos look best (shown at 3:4). */
+  src: string;
+  alt: string;
+  /** Optional handwritten caption on the polaroid's bottom strip. */
+  caption?: string;
+}
+
+export const polaroids: Polaroid[] = [
+  {
+    src: "/polaroids/01.jpg",
+    alt: "Selfie with a Florida Gators player on the field at Ben Hill Griffin Stadium after a night game",
+  },
+  {
+    src: "/polaroids/02.jpg",
+    alt: "Fisheye shot of me and another player standing by a stage at an outdoor football event",
+  },
+];
+
+// ---------------------------------------------------------------------------
 // Contact
 // ---------------------------------------------------------------------------
 
