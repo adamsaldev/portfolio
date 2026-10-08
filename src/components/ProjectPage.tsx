@@ -133,6 +133,51 @@ function PhotoRow({ photos }: { photos: MediaAsset[] }) {
   );
 }
 
+type Step = MediaAsset & { caption: string };
+
+const STEP_COLS: Partial<Record<MediaAsset["frame"], string>> = {
+  tall: "grid-cols-2 sm:grid-cols-4",
+  photo: "grid-cols-2 sm:grid-cols-4",
+  phone: "grid-cols-2 sm:grid-cols-4",
+};
+
+/** Numbered pipeline stages. Consecutive steps with the same frame share a row. */
+function PipelineSteps({ steps }: { steps: Step[] }) {
+  const rows: { start: number; items: Step[] }[] = [];
+  steps.forEach((s, i) => {
+    const last = rows.at(-1);
+    if (last && last.items[0].frame === s.frame) last.items.push(s);
+    else rows.push({ start: i, items: [s] });
+  });
+  return (
+    <div className="space-y-6 sm:space-y-8">
+      {rows.map((row) => {
+        const cols =
+          STEP_COLS[row.items[0].frame] ??
+          (row.items.length >= 3 ? "sm:grid-cols-3" : "sm:grid-cols-2");
+        const width = row.items[0].frame === "tall" ? "260px" : row.items.length >= 3 ? "340px" : "520px";
+        return (
+          <ol key={row.start} start={row.start + 1} className={`grid gap-4 sm:gap-6 ${cols}`}>
+            {row.items.map((s, j) => (
+              <li key={s.src}>
+                <figure>
+                  <ProjectMedia asset={s} sizes={`(min-width: 640px) ${width}, 100vw`} />
+                  <figcaption className="mt-2 space-y-1">
+                    <span className="block font-mono text-meta text-subtle">
+                      <span className="tabular-nums">{String(row.start + j + 1).padStart(2, "0")}</span> · {s.label}
+                    </span>
+                    <span className="block text-small text-muted">{s.caption}</span>
+                  </figcaption>
+                </figure>
+              </li>
+            ))}
+          </ol>
+        );
+      })}
+    </div>
+  );
+}
+
 /** How the project changed across versions: stacked stages joined by arrows. */
 function Evolution({ stages }: { stages: EvolutionStage[] }) {
   return (
@@ -304,6 +349,9 @@ export function ProjectPage({ project, next }: { project: Project; next?: Projec
                   pipeline={cs.architecture.pipeline}
                   caption={cs.architecture.caption}
                 />
+                {cs.architecture.steps ? (
+                  <PipelineSteps steps={cs.architecture.steps.filter(mediaVisible)} />
+                ) : null}
               </Block>
             ) : null}
 

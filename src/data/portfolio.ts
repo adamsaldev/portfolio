@@ -83,7 +83,7 @@ export interface Experience {
   placeholder?: boolean;
 }
 
-export type MediaFrame = "wide" | "desktop" | "phone" | "photo";
+export type MediaFrame = "wide" | "desktop" | "phone" | "photo" | "tall";
 
 export interface MediaAsset {
   /** Path under /public. Images (.png/.jpg/.webp/.avif) or video (.mp4/.webm). */
@@ -167,6 +167,8 @@ export interface CaseStudy {
     pipeline: string[];
     /** Diagram caption. Defaults to "Conceptual data flow". */
     caption?: string;
+    /** Real output of each stage, in order. Consecutive steps with the same frame share a row. */
+    steps?: (MediaAsset & { caption: string })[];
   };
   /** Physical build: paragraphs plus a row of photos. */
   hardware?: CaseStudySection & { photos: MediaAsset[] };
@@ -538,6 +540,72 @@ export const projects: Project[] = [
           "Robot Control Interface",
         ],
         caption: "Processing pipeline",
+        // Real stage outputs from video.py on one frame of the sunset clip
+        steps: [
+          {
+            src: "/projects/autonomous-vision/steps/1-input.jpg",
+            label: "Input frame",
+            caption: "One raw frame from the dashcam clip.",
+            alt: "Dashcam frame of a highway at sunset with dashed white lane lines",
+            frame: "desktop",
+          },
+          {
+            src: "/projects/autonomous-vision/steps/2-yellow-mask.jpg",
+            label: "Yellow color mask",
+            caption: "Pixels in the yellow range get brightened. This road has white lines, so here it mostly catches the sunset sky.",
+            alt: "Black and white mask where the orange sky and mountains are white and the road is black",
+            frame: "desktop",
+          },
+          {
+            src: "/projects/autonomous-vision/steps/3-window.jpg",
+            label: "Perspective window",
+            caption: "Auto-calibrated from the vanishing point and my own lane's two lines.",
+            alt: "The same frame with a cyan trapezoid over the road marking the region that gets warped",
+            frame: "desktop",
+          },
+          {
+            src: "/projects/autonomous-vision/steps/4-birdseye.jpg",
+            label: "Bird's-eye warp",
+            caption: "That window warped to a top-down view, so the lanes run straight up.",
+            alt: "Top-down view of the road with two near-vertical lane lines",
+            frame: "tall",
+          },
+          {
+            src: "/projects/autonomous-vision/steps/5-edges.jpg",
+            label: "Canny edges",
+            caption: "Grayscale, then Canny keeps only the sharp edges.",
+            alt: "Thin white edge outlines on black, mostly along the lane lines",
+            frame: "tall",
+          },
+          {
+            src: "/projects/autonomous-vision/steps/6-hough.jpg",
+            label: "Hough lines",
+            caption: "Near-vertical segments, sorted into left (blue) and right (red).",
+            alt: "Top-down road with blue line segments on the left lane and red segments on the right lane",
+            frame: "tall",
+          },
+          {
+            src: "/projects/autonomous-vision/steps/7-lanes.jpg",
+            label: "Tracked lanes",
+            caption: "Smoothed lane lines and the lane center, which drives the turn call.",
+            alt: "Top-down road with two cyan lane lines and a red center line between them",
+            frame: "tall",
+          },
+          {
+            src: "/projects/autonomous-vision/steps/8-warp-back.jpg",
+            label: "Warped back",
+            caption: "The overlay run through the inverse warp, back into the camera's view.",
+            alt: "Cyan lane lines and a red center line in perspective on a black background",
+            frame: "desktop",
+          },
+          {
+            src: "/projects/autonomous-vision/steps/9-final.jpg",
+            label: "Final overlay",
+            caption: "Added onto the original frame.",
+            alt: "The sunset highway frame with cyan lane lines and a red center line drawn on the road",
+            frame: "desktop",
+          },
+        ],
         body: [
           "First I crop each frame, pick out the yellow lane lines by color, and warp it so it's like looking down at the road from above. Then it goes grayscale, Canny finds the edges, and a Hough transform turns those edges into line segments.",
           "Next I toss out lines that aren't close to vertical and split the rest into left and right lanes based on where they are. Averaging each side gives me the lane lines plus a center line, and where that center line sits decides the turn call. Last step, the overlay gets warped back to the normal view and shown in the app.",
