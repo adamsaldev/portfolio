@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { LinkItem } from "@/data/portfolio";
@@ -13,12 +14,15 @@ export function TextLink({
   className = "",
   arrow = true,
   quiet = false,
+  icon,
 }: {
   link: LinkItem;
   className?: string;
   arrow?: boolean;
   /** Underline on hover only (navigation). */
   quiet?: boolean;
+  /** Small icon shown before the label (e.g. a site's mark). */
+  icon?: ReactNode;
 }) {
   const underline = quiet ? "link-quiet" : "link";
   if (isPending(link.href)) {
@@ -29,6 +33,7 @@ export function TextLink({
         title={`TODO(PORTFOLIO): ${link.todo ?? `Add ${link.label} URL`}`}
         data-todo
       >
+        {icon ? <span className="mr-1.5 inline-flex align-[-0.125em]">{icon}</span> : null}
         {link.label}
       </span>
     );
@@ -53,6 +58,7 @@ export function TextLink({
         ? { target: "_blank", rel: "noopener noreferrer" }
         : {})}
     >
+      {icon ? <span className="mr-1 self-center">{icon}</span> : null}
       <span className={underline}>{link.label}</span>
       {arrow && link.external && !isMail ? (
         <ArrowUpRight

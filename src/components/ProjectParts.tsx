@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { Project } from "@/data/portfolio";
+import { GitHubMark } from "@/components/GitHubMark";
 import { TextLink } from "@/components/TextLink";
 import { Todo } from "@/components/Todo";
 import { isDraft, isPending } from "@/lib/site";
@@ -65,7 +66,10 @@ export function OutboundLinks({ project }: { project: Project }) {
     <ul className="flex flex-wrap items-center gap-x-5 gap-y-2 text-small">
       {links.map((l) => (
         <li key={l.label}>
-          <TextLink link={{ ...l, external: true }} />
+          <TextLink
+            link={{ ...l, external: true }}
+            icon={l.label === "GitHub" ? <GitHubMark /> : undefined}
+          />
         </li>
       ))}
     </ul>

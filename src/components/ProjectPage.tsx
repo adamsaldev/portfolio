@@ -15,6 +15,7 @@ import {
 } from "@/components/ProjectParts";
 import { Section } from "@/components/Section";
 import { DraftNote } from "@/components/Todo";
+import { GitHubMark } from "@/components/GitHubMark";
 import { isDraft } from "@/lib/site";
 
 function Prose({ paragraphs }: { paragraphs: string[] }) {
@@ -85,6 +86,7 @@ function Repositories({ repos }: { repos: Repository[] }) {
             className="group grid gap-1 py-3.5 sm:grid-cols-[minmax(0,18rem)_1fr] sm:gap-6"
           >
             <span className="inline-flex items-center gap-1 font-mono text-small">
+              <GitHubMark className="size-3.5 text-subtle transition-colors group-hover:text-fg" />
               <span className="link-quiet truncate">{r.label}</span>
               <ArrowUpRight aria-hidden className="arrow arrow-up size-3.5 shrink-0 text-subtle" strokeWidth={1.75} />
               <span className="sr-only"> (opens in a new tab)</span>
@@ -123,6 +125,7 @@ function Evolution({ stages }: { stages: EvolutionStage[] }) {
                   rel="noopener noreferrer"
                   className="group inline-flex items-center gap-1 font-mono text-meta text-subtle transition-colors hover:text-fg"
                 >
+                  <GitHubMark className="size-3" />
                   <span className="link-quiet">GitHub</span>
                   <ArrowUpRight aria-hidden className="arrow arrow-up size-3" strokeWidth={1.75} />
                   <span className="sr-only"> — {st.name} (opens in a new tab)</span>
