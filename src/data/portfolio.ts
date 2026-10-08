@@ -444,7 +444,7 @@ export const projects: Project[] = [
     slug: "autonomous-vision",
     number: "02",
     name: "Lane Detection Robot",
-    category: "Computer Vision",
+    category: "Computer Vision / Robotics",
     role: null,
     year: "2024",
     description:
