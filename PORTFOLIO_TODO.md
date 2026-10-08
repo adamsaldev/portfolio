@@ -13,7 +13,7 @@ Find every marker in code with: `grep -rn "TODO(PORTFOLIO)" src public`
 - [x] Headshot → `public/headshot.jpg`
 - [ ] Confirm the UF start year (currently `2026`) → `education[0].start`
 - [ ] Optional verified details for the Now section (relevant coursework, honors) → `education[0].details`
-- [ ] Confirm the availability line "Seeking software engineering internships" → `personal.availability` (set to `null` to hide)
+- [x] Status line: "Probably studying" → `personal.availability` (set to `null` to hide)
 - [ ] Read the About copy and rewrite it in your own voice if needed → `about.paragraphs`
 - [ ] Confirm the technical-interest list → `about.interests`
 - [ ] Favicon: `src/app/icon.svg` is a plain "AS" placeholder. Replace it if you have your own.

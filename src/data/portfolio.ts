@@ -41,7 +41,7 @@ export interface Personal {
   title: string;
   affiliation: string;
   intro: string;
-  /** Short availability line shown under the intro. `null` hides it. */
+  /** Short status line shown in the intro. `null` hides it. */
   availability: string | null;
   location: string | null;
   /** IANA time zone for the live "Local time" clock. `null` hides it. */
@@ -227,7 +227,7 @@ export const personal: Personal = {
   affiliation: "University of Florida",
   intro:
     "CS student at UF. I build fast, data-driven software and I'm really into systems, performance, and how computers actually work.",
-  availability: "Seeking software engineering internships",
+  availability: "Probably studying",
   // TODO(PORTFOLIO): Add location (optional), e.g. city you want to show.
   location: null,
   // TODO(PORTFOLIO): Confirm time zone (set to null to hide the clock).
@@ -763,7 +763,7 @@ export const about = {
 
 export const contact = {
   heading: "Get in touch.",
-  body: "I'm looking for software engineering internships.",
+  body: "Want to talk about something I've built, or something you're building?",
   /** Appended to `body` only when `personal.email` is set. */
   emailLine: "Email's the fastest way to reach me.",
 };
