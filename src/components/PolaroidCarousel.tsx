@@ -19,16 +19,18 @@ const TILTS = [-4, 3, -2, 4, -3, 2];
 function Frame({ p, large = false }: { p: Polaroid; large?: boolean }) {
   return (
     <div
-      className={`rounded-[3px] bg-[#fbfbf8] shadow-[0_1px_2px_rgb(0_0_0/0.12),0_12px_28px_-10px_rgb(0_0_0/0.35)] ${
-        large ? "p-3.5 pb-16 sm:p-4 sm:pb-20" : "p-2.5 pb-11"
+      className={`bg-[#fbfbf8] shadow-[0_1px_2px_rgb(0_0_0/0.12),0_12px_28px_-10px_rgb(0_0_0/0.35)] ${
+        large ? "rounded-2xl p-3.5 pb-14 sm:p-4 sm:pb-16" : "rounded-xl p-2 pb-9"
       }`}
     >
-      <div className="relative aspect-[3/4] overflow-hidden bg-[#e9e9e4]">
+      <div
+        className={`relative aspect-[4/5] overflow-hidden bg-[#e9e9e4] ${large ? "rounded-xl" : "rounded-lg"}`}
+      >
         <Image
           src={p.src}
           alt={p.alt}
           fill
-          sizes={large ? "(min-width: 640px) 480px, 86vw" : "240px"}
+          sizes={large ? "(min-width: 640px) 440px, 86vw" : "200px"}
           className="object-cover"
           draggable={false}
         />
@@ -136,7 +138,7 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
   }, [focused, close, step]);
 
   const scrollBy = (d: number) =>
-    trackRef.current?.scrollBy({ left: d * 280, behavior: "smooth" });
+    trackRef.current?.scrollBy({ left: d * 220, behavior: "smooth" });
 
   return (
     <div ref={rootRef} className="relative">
@@ -150,14 +152,14 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
           return (
             <li
               key={p.src}
-              className={`polaroid-card w-48 shrink-0 snap-center sm:w-56 ${inView ? "is-in" : ""}`}
+              className={`polaroid-card w-40 shrink-0 snap-center sm:w-44 ${inView ? "is-in" : ""}`}
               style={{ "--r": `${tilt}deg`, "--i": i } as CSSProperties}
             >
               <button
                 type="button"
                 onClick={(e) => open(i, e.currentTarget)}
                 aria-label={`Open photo ${i + 1} of ${photos.length}${p.caption ? `: ${p.caption}` : ""}`}
-                className="block w-full cursor-zoom-in rounded-[3px] outline-offset-4"
+                className="block w-full cursor-zoom-in rounded-xl outline-offset-4"
               >
                 {isFocused ? (
                   // Keep the slot; the photo is "lifted" into the lightbox.
@@ -207,7 +209,7 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
         >
           <div className="overlay-in absolute inset-0 bg-[rgb(0_0_0/0.72)] backdrop-blur-sm" onClick={close} aria-hidden />
 
-          <div className="relative w-[min(86vw,30rem,calc((100dvh-9rem)*0.68))]">
+          <div className="relative w-[min(86vw,27.5rem,calc((100dvh-9rem)*0.74))]">
             <ViewTransition name={`polaroid-${focused}`} share="morph" default="none">
               <div key={focused} className={stepped ? "polaroid-swap" : ""}>
                 <Frame p={photos[focused]} large />
