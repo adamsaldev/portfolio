@@ -165,8 +165,8 @@ export interface CaseStudy {
   architecture?: CaseStudySection & {
     sources: string[];
     pipeline: string[];
-    /** Diagram caption. Defaults to "Conceptual data flow". */
-    caption?: string;
+    /** Diagram caption. Defaults to "Conceptual data flow"; null hides it. */
+    caption?: string | null;
     /** Real output of each stage, in order. Consecutive steps with the same frame share a row. */
     steps?: (MediaAsset & { caption: string })[];
   };
@@ -426,9 +426,10 @@ export const projects: Project[] = [
         ],
       },
       learned: {
-        // TODO(PORTFOLIO): Add what you learned building Varsity.
-        body: [],
-        todo: ["2–3 sentences on what building Varsity taught you."],
+        body: [
+          "Varsity was my first full-stack iOS app, so I had to figure out everything from the backend to what actually shows up on your screen.",
+          "I got a lot better with APIs, especially pulling data from a bunch of different sources and getting it to line up into one clean set of games, teams, and players. And I spent a ton of time on the frontend, figuring out how to fit a lot of stats on a phone screen without it feeling cluttered.",
+        ],
       },
     },
   },
@@ -539,7 +540,7 @@ export const projects: Project[] = [
           "Steering / Turn Decision",
           "Robot Control Interface",
         ],
-        caption: "Processing pipeline",
+        caption: null,
         // Real stage outputs from video.py on one tunnel frame of the night clip
         steps: [
           {
@@ -607,11 +608,9 @@ export const projects: Project[] = [
           },
         ],
         body: [
-          "First I crop each frame, pick out the yellow lane lines by color, and warp it so it's like looking down at the road from above. Then it goes grayscale, Canny finds the edges, and a Hough transform turns those edges into line segments.",
-          "Next I toss out lines that aren't close to vertical and split the rest into left and right lanes based on where they are. Averaging each side gives me the lane lines plus a center line, and where that center line sits decides the turn call. Last step, the overlay gets warped back to the normal view and shown in the app.",
-          "The live robot version runs a simpler take on this on the camera feed: grayscale, blur, Canny, Hough, and a slope filter.",
-          "The demo footage here is two dashcam clips (a sunset highway and a night drive), not my original road video.",
-          "The original version had the perspective window hardcoded for one camera and judged every frame on its own, so on new footage the lines would glitch. I upgraded it: now it finds where the lane lines meet (the vanishing point) and builds the window from your own lane's two lines, re-checking every few frames. Each lane is only searched for near where it was last frame, both lanes share one smoothed lean since they're parallel from above, and a median over the last few detections means a bad frame or two can't make the lines jump. If a lane drops out or wanders off, it's rebuilt from the other one using the lane width.",
+          "The images below are the real output of each step on one frame of the night drive.",
+          "The original version had the perspective window hardcoded for one camera and judged every frame on its own, so on new footage the lines would glitch. Now it calibrates the window itself every few frames, only looks for each lane near where it was last frame, and takes a median over the last few detections so a bad frame or two can't make the lines jump. If a lane drops out or wanders off, it's rebuilt from the other one using the lane width.",
+          "The demo footage is two dashcam clips (a sunset highway and a night drive), not my original road video. The live robot version runs a simpler take on the camera feed: grayscale, blur, Canny, Hough, and a slope filter.",
         ],
       },
       hardware: {
@@ -650,9 +649,10 @@ export const projects: Project[] = [
         ],
       },
       learned: {
-        // TODO(PORTFOLIO): Add what you learned building this.
-        body: [],
-        todo: ["2–3 sentences on what this project taught you."],
+        body: [
+          "This is where I learned how to work with images in code. A frame is really just a grid of numbers, so you can filter it, mask it, and warp it however you want, and I got into the core image processing tools for that: color thresholds, edge detection, and Hough transforms.",
+          "A lot of it ended up being linear algebra too. The bird's-eye view is a perspective transform matrix, and finding the lanes came down to fitting lines, solving for where they cross, and approximating where the lane really is from a bunch of noisy segments.",
+        ],
       },
     },
   },
@@ -833,9 +833,10 @@ export const projects: Project[] = [
         ],
       },
       learned: {
-        // TODO(PORTFOLIO): Add what you learned building this.
-        body: [],
-        todo: ["2–3 sentences on what this project taught you."],
+        body: [
+          "The big thing I learned is that making something faster isn't only about a better algorithm. A lot of it is about where the work happens. Splitting the job across machines, letting workers start sorting while the coordinator is still reading the file, and merging results as they come in all cut down on time spent waiting.",
+          "Same idea between systems: keeping the data in binary as it moves between the coordinator and the workers, instead of converting it back and forth, saved work at every step.",
+        ],
       },
     },
   },

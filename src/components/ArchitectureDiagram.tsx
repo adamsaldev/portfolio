@@ -15,7 +15,8 @@ export function ArchitectureDiagram({
 }: {
   sources: string[];
   pipeline: string[];
-  caption?: string;
+  /** null hides the caption. */
+  caption?: string | null;
 }) {
   // Long pipelines don't fit across; render them as a vertical flow instead.
   if (pipeline.length > 4) {
@@ -87,9 +88,11 @@ export function ArchitectureDiagram({
           </ol>
         </div>
       </div>
-      <figcaption className="mt-6 font-mono text-meta text-subtle">
-        {caption}: {sources.join(", ")} → {pipeline.join(" → ")}
-      </figcaption>
+      {caption !== null ? (
+        <figcaption className="mt-6 font-mono text-meta text-subtle">
+          {caption}: {sources.join(", ")} → {pipeline.join(" → ")}
+        </figcaption>
+      ) : null}
     </figure>
   );
 }
@@ -102,7 +105,7 @@ function StackedDiagram({
 }: {
   sources: string[];
   pipeline: string[];
-  caption: string;
+  caption: string | null;
 }) {
   return (
     <figure className="rounded-lg border border-line p-5 sm:p-8">
@@ -140,9 +143,11 @@ function StackedDiagram({
         ))}
       </ol>
 
-      <figcaption className="mt-6 font-mono text-meta text-subtle">
-        {caption}: {sources.join(", ")} → {pipeline.join(" → ")}
-      </figcaption>
+      {caption !== null ? (
+        <figcaption className="mt-6 font-mono text-meta text-subtle">
+          {caption}: {sources.join(", ")} → {pipeline.join(" → ")}
+        </figcaption>
+      ) : null}
     </figure>
   );
 }
