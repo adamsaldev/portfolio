@@ -10,6 +10,7 @@ const ASPECT: Record<Frame, string> = {
   wide: "aspect-[16/9]",
   desktop: "aspect-[16/10]",
   phone: "aspect-[9/19.5]",
+  photo: "aspect-[4/5]",
 };
 
 const RADIUS: Record<Frame, string> = {
@@ -17,6 +18,7 @@ const RADIUS: Record<Frame, string> = {
   wide: "rounded-lg",
   desktop: "rounded-lg",
   phone: "rounded-[1.75rem]",
+  photo: "rounded-lg",
 };
 
 /** Whether a media slot renders at all (real file, or placeholder in draft). */

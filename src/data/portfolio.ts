@@ -83,7 +83,7 @@ export interface Experience {
   placeholder?: boolean;
 }
 
-export type MediaFrame = "wide" | "desktop" | "phone";
+export type MediaFrame = "wide" | "desktop" | "phone" | "photo";
 
 export interface MediaAsset {
   /** Path under /public. Images (.png/.jpg/.webp/.avif) or video (.mp4/.webm). */
@@ -168,6 +168,8 @@ export interface CaseStudy {
     /** Diagram caption. Defaults to "Conceptual data flow". */
     caption?: string;
   };
+  /** Physical build: paragraphs plus a row of photos. */
+  hardware?: CaseStudySection & { photos: MediaAsset[] };
   evolution?: CaseStudySection & { stages: EvolutionStage[] };
   performance?: CaseStudySection & { metrics: Metric[]; comparison?: Comparison };
   challenges?: CaseStudySection & { items: { title: string; body: string }[] };
@@ -542,6 +544,33 @@ export const projects: Project[] = [
           "The live robot version runs a simpler take on this on the camera feed: grayscale, blur, Canny, Hough, and a slope filter.",
           "The demo footage here is two dashcam clips (a sunset highway and a night drive), not my original road video.",
           "The original version had the perspective window hardcoded for one camera and judged every frame on its own, so on new footage the lines would glitch. I upgraded it: now it finds where the lane lines meet (the vanishing point) and builds the window from your own lane's two lines, re-checking every few frames. Each lane is only searched for near where it was last frame, both lanes share one smoothed lean since they're parallel from above, and a median over the last few detections means a bad frame or two can't make the lines jump. If a lane drops out or wanders off, it's rebuilt from the other one using the lane width.",
+        ],
+      },
+      hardware: {
+        body: [
+          "The live version ran on a small tank robot built from a XiaoR Geek TH tank chassis kit, with an Orange Pi, a battery pack, and a Logitech webcam on top.",
+          "The Orange Pi didn't do any of the vision work. It ran a small live API that streamed the webcam feed to my computer, the computer ran the lane detection and worked out the movement commands, and those got sent back to the robot to drive it.",
+          "The prototype had the webcam taped straight onto the chassis. For the final robot at the end of the class we 3D printed a stand for it. We were working with really cheap equipment, so the stand cut down the vibration and raised the camera up for a clearer view of the lines.",
+        ],
+        photos: [
+          {
+            src: "/projects/autonomous-vision/robot-prototype.jpg",
+            label: "Prototype",
+            alt: "Prototype tank robot on a desk: gold tracked chassis with an Orange Pi and a Logitech webcam taped on top",
+            frame: "photo",
+          },
+          {
+            src: "/projects/autonomous-vision/robot-final.jpg",
+            label: "Final robot",
+            alt: "Final tank robot from above, with the Orange Pi on the chassis and the webcam mounted on a tall black 3D-printed stand",
+            frame: "photo",
+          },
+          {
+            src: "/projects/autonomous-vision/robot-final-side.jpg",
+            label: "Final robot, side view",
+            alt: "Side view of the final tank robot on a classroom floor, with the webcam on top of the 3D-printed stand",
+            frame: "photo",
+          },
         ],
       },
       challenges: {

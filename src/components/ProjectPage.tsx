@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ViewTransition, type ReactNode } from "react";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
-import type { CaseStudySection, EvolutionStage, Project, Repository } from "@/data/portfolio";
+import type { CaseStudySection, EvolutionStage, MediaAsset, Project, Repository } from "@/data/portfolio";
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
 import { ComparisonChart } from "@/components/ComparisonChart";
 import { Container } from "@/components/Container";
@@ -97,6 +97,22 @@ function Repositories({ repos }: { repos: Repository[] }) {
               </span>
             ) : null}
           </a>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** Photos of a physical build, captioned, three across. */
+function PhotoRow({ photos }: { photos: MediaAsset[] }) {
+  return (
+    <ul className="grid gap-4 sm:grid-cols-3 sm:gap-6">
+      {photos.map((p) => (
+        <li key={p.src}>
+          <figure>
+            <ProjectMedia asset={p} sizes="(min-width: 640px) 340px, 100vw" />
+            <figcaption className="mt-2 font-mono text-meta text-subtle">{p.label}</figcaption>
+          </figure>
         </li>
       ))}
     </ul>
@@ -274,6 +290,12 @@ export function ProjectPage({ project, next }: { project: Project; next?: Projec
                   pipeline={cs.architecture.pipeline}
                   caption={cs.architecture.caption}
                 />
+              </Block>
+            ) : null}
+
+            {cs.hardware ? (
+              <Block id="hardware" label="The robot" section={cs.hardware} show>
+                <PhotoRow photos={cs.hardware.photos.filter(mediaVisible)} />
               </Block>
             ) : null}
 
