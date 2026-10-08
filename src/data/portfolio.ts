@@ -500,6 +500,13 @@ export const projects: Project[] = [
           alt: "Looping clip of the lane-detection overlay tracking both lane lines on a highway",
           frame: "desktop",
         },
+        {
+          src: "/projects/autonomous-vision/night-drive-output.mp4",
+          poster: "/projects/autonomous-vision/night-drive-poster.jpg",
+          label: "Night Drive",
+          alt: "Looping clip of the lane-detection overlay tracking the lane lines on a highway at night",
+          frame: "desktop",
+        },
         // TODO(PORTFOLIO): Add a screenshot of the Tkinter control panel
         {
           src: "/projects/autonomous-vision/robot-control-interface.png",
@@ -533,7 +540,7 @@ export const projects: Project[] = [
           "First I crop each frame, pick out the yellow lane lines by color, and warp it so it's like looking down at the road from above. Then it goes grayscale, Canny finds the edges, and a Hough transform turns those edges into line segments.",
           "Next I toss out lines that aren't close to vertical and split the rest into left and right lanes based on where they are. Averaging each side gives me the lane lines plus a center line, and where that center line sits decides the turn call. Last step, the overlay gets warped back to the normal view and shown in the app.",
           "The live robot version runs a simpler take on this on the camera feed: grayscale, blur, Canny, Hough, and a slope filter.",
-          "The demo footage here is a sample dashcam clip, not my original road video — I recalibrated the four perspective points for that camera, and everything else is the pipeline as written.",
+          "The demo footage here is two dashcam clips (a sunset highway and a night drive), not my original road video — I recalibrated the four perspective points for each camera, and everything else is the pipeline as written.",
         ],
       },
       challenges: {
