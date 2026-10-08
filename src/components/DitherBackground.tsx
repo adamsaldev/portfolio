@@ -20,6 +20,7 @@ const SETTINGS = {
   colorNum: 13.1,
   pixelSize: 4, // dither cell size in device pixels (original default: 2)
   fps: 30,
+  opacity: 0.5, // overall strength of the background (0–1)
 };
 
 const VERT = `#version 300 es
@@ -225,6 +226,7 @@ export function DitherBackground({ className = "" }: { className?: string }) {
       ref={ref}
       aria-hidden
       className={`block h-full w-full [image-rendering:pixelated] ${className}`}
+      style={{ opacity: SETTINGS.opacity }}
     />
   );
 }
