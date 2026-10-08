@@ -23,7 +23,7 @@ export function Section({
     <section
       id={id}
       aria-labelledby={headingId}
-      className={`scroll-mt-16 ${compact ? "py-8 sm:py-10" : "py-12 sm:py-16"}`}
+      className={`relative scroll-mt-16 ${compact ? "py-8 sm:py-10" : "py-12 sm:py-16"}`}
     >
       <Container>
         <Reveal className="flex items-baseline justify-between border-t border-line pt-5">

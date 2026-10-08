@@ -295,10 +295,10 @@ export const education: Education[] = [
 export const experience: Experience[] = [
   {
     organization: "@adamflicks",
-    position: "Freelance Videographer & Photographer",
+    position: "Sports Videographer & Photographer",
     date: "2023 — Present",
     location: null,
-    description: "Freelance video and photo work",
+    description: "Sports video and photo work",
     href: "https://www.instagram.com/adamflicks",
     logo: "/logos/instagram.png",
   },

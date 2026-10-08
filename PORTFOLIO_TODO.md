@@ -70,5 +70,5 @@ Find every marker in code with: `grep -rn "TODO(PORTFOLIO)" src public`
 
 ## Experience
 
-- [x] Freelance Videographer & Photographer, @adamflicks (2023 — Present)
+- [x] Sports Videographer & Photographer, @adamflicks (2023 — Present)
 - [ ] Add more roles to `experience` in `src/data/portfolio.ts` as you get them (optional `logo` at `public/logos/…`)

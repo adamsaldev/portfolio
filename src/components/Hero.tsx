@@ -3,6 +3,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { about, education, experience, personal } from "@/data/portfolio";
 import { Container } from "@/components/Container";
+import { DitherBackground } from "@/components/DitherBackground";
 import { LocalTime } from "@/components/LocalTime";
 import { TextLink } from "@/components/TextLink";
 import { Todo } from "@/components/Todo";
@@ -108,7 +109,14 @@ export function Hero() {
   const jobs = experience.filter((e) => isDraft || !e.placeholder);
 
   return (
-    <section aria-labelledby="hero-name" className="pt-14 pb-6 sm:pt-24 sm:pb-10">
+    <section aria-labelledby="hero-name" className="relative isolate pt-14 pb-6 sm:pt-24 sm:pb-10">
+      {/* Dither background: starts behind the top bar, fades out just past the hero. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 -top-14 -bottom-28 -z-10 [mask-image:linear-gradient(to_bottom,black_0%,black_50%,transparent_100%)]"
+      >
+        <DitherBackground />
+      </div>
       <Container>
         <div className="grid gap-y-12 md:grid-cols-12 md:gap-x-10">
           {/* Identity */}
