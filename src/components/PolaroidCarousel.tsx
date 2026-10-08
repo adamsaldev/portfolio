@@ -266,7 +266,7 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
           return (
             <li
               key={p.src}
-              className={`polaroid-card w-40 shrink-0 snap-center not-first:-ml-10 sm:w-44 sm:not-first:-ml-12 ${inView ? "is-in" : ""}`}
+              className={`polaroid-card w-40 shrink-0 snap-center not-first:-ml-7 sm:w-44 sm:not-first:-ml-9 ${inView ? "is-in" : ""}`}
               style={
                 {
                   "--r": `${TILTS[i % TILTS.length]}deg`,
