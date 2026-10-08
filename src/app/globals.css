@@ -503,6 +503,38 @@ html[data-scrolled] .site-header {
   }
 }
 
+/* Photo lightbox (transition type "lightbox"): no whole-page crossfade.
+   The backdrop + buttons are their own layer (.lb-chrome); since they're
+   hidden on one side of the transition, the browser fades that layer in
+   (open) or out (close) alongside the photo morph. */
+:root:active-view-transition-type(lightbox)::view-transition-old(root),
+:root:active-view-transition-type(lightbox)::view-transition-new(root) {
+  animation: none;
+}
+.lb-chrome {
+  view-transition-name: lb-chrome;
+}
+::view-transition-new(lb-chrome) {
+  animation: 280ms ease-out both vt-fade;
+}
+::view-transition-old(lb-chrome) {
+  animation: 220ms ease-in both vt-fade reverse;
+}
+/* Keep the flying photo above the backdrop layer (both open and close). */
+::view-transition-group(lb-chrome) {
+  z-index: 1;
+}
+::view-transition-group(.morph) {
+  z-index: 2;
+}
+/* Browsers without View Transitions: a plain CSS fade instead. */
+@supports not (view-transition-name: none) {
+  .lb-fade {
+    transition:
+      opacity 280ms ease-out,
+      visibility 280ms;
+  }
+}
 /* Theme switch: circular reveal (driven from ThemeToggle). */
 html.theme-switching::view-transition-old(root),
 html.theme-switching::view-transition-new(root) {

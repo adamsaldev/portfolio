@@ -3,6 +3,7 @@
 import Image from "next/image";
 import {
   ViewTransition,
+  addTransitionType,
   startTransition,
   useCallback,
   useEffect,
@@ -36,7 +37,14 @@ function InnerStroke() {
 function Card({ p }: { p: Polaroid }) {
   return (
     <div className="relative aspect-[5/6] overflow-hidden rounded-xl bg-panel shadow-[0_10px_24px_-12px_rgb(0_0_0/0.5)]">
-      <Image src={p.src} alt={p.alt} fill sizes={SMALL_SIZES} className="object-cover" draggable={false} />
+      <Image
+        src={p.src}
+        alt={p.alt}
+        fill
+        sizes={SMALL_SIZES}
+        className="object-cover"
+        draggable={false}
+      />
       <InnerStroke />
     </div>
   );
@@ -53,9 +61,22 @@ function Focused({ p, preview }: { p: Polaroid; preview: string | null }) {
     <div className="relative aspect-[5/6] overflow-hidden rounded-2xl bg-panel shadow-[0_30px_80px_-24px_rgb(0_0_0/0.7)]">
       {preview ? (
         // eslint-disable-next-line @next/next/no-img-element -- must reuse the card's already-loaded file verbatim
-        <img src={preview} alt={p.alt} className="absolute inset-0 h-full w-full object-cover" draggable={false} />
+        <img
+          src={preview}
+          alt={p.alt}
+          className="absolute inset-0 h-full w-full object-cover"
+          draggable={false}
+        />
       ) : (
-        <Image src={p.src} alt={p.alt} fill sizes={SMALL_SIZES} loading="eager" className="object-cover" draggable={false} />
+        <Image
+          src={p.src}
+          alt={p.alt}
+          fill
+          sizes={SMALL_SIZES}
+          loading="eager"
+          className="object-cover"
+          draggable={false}
+        />
       )}
       <Image
         src={p.src}
@@ -98,6 +119,8 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
     return img && img.complete && img.naturalWidth > 0 ? img.currentSrc : null;
   }, []);
   const [canScroll, setCanScroll] = useState({ left: false, right: false });
+  // Last photo shown, so the counter doesn't jump while the view fades out.
+  const [lastShown, setLastShown] = useState(0);
 
   // Drop-in once visible.
   useEffect(() => {
@@ -138,17 +161,25 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
   const open = (i: number) => {
     const src = previewFor(i);
     startTransition(() => {
+      addTransitionType("lightbox");
       setStepped(false);
       setPreview(src);
+      setLastShown(i);
       setFocused(i);
     });
   };
 
   const close = useCallback(() => {
     const i = focused;
-    startTransition(() => setFocused(null));
+    startTransition(() => {
+      addTransitionType("lightbox");
+      setFocused(null);
+    });
     // Return focus to the photo that's now showing (the one you last viewed).
-    if (i !== null) requestAnimationFrame(() => cardRefs.current[i]?.focus({ preventScroll: true }));
+    if (i !== null)
+      requestAnimationFrame(() =>
+        cardRefs.current[i]?.focus({ preventScroll: true }),
+      );
   }, [focused]);
 
   const step = useCallback(
@@ -157,6 +188,7 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
       const n = (focused + d + photos.length) % photos.length;
       setStepped(true);
       setPreview(previewFor(n));
+      setLastShown(n);
       setFocused(n);
     },
     [focused, photos.length, previewFor],
@@ -177,10 +209,18 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
         e.preventDefault();
         step(-1);
       } else if (e.key === "Tab") {
-        const els = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>("button") ?? []);
+        const els = Array.from(
+          dialogRef.current?.querySelectorAll<HTMLElement>("button") ?? [],
+        );
         if (els.length === 0) return;
         const idx = els.indexOf(document.activeElement as HTMLElement);
-        const next = e.shiftKey ? (idx <= 0 ? els.length - 1 : idx - 1) : idx === els.length - 1 ? 0 : idx + 1;
+        const next = e.shiftKey
+          ? idx <= 0
+            ? els.length - 1
+            : idx - 1
+          : idx === els.length - 1
+            ? 0
+            : idx + 1;
         e.preventDefault();
         els[next].focus();
       }
@@ -209,7 +249,11 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
     if (Math.abs(dx) > 48) step(dx < 0 ? 1 : -1);
   };
 
-  const scrollBy = (d: number) => trackRef.current?.scrollBy({ left: d * 220, behavior: "smooth" });
+  const isOpen = focused !== null;
+  const shown = focused ?? lastShown;
+
+  const scrollBy = (d: number) =>
+    trackRef.current?.scrollBy({ left: d * 220, behavior: "smooth" });
 
   return (
     <div ref={rootRef} className="relative">
@@ -246,7 +290,11 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
                     <Card p={p} />
                   </div>
                 ) : (
-                  <ViewTransition name={`polaroid-${i}`} share="morph" default="none">
+                  <ViewTransition
+                    name={`polaroid-${i}`}
+                    share="morph"
+                    default="none"
+                  >
                     <div>
                       <Card p={p} />
                     </div>
@@ -261,8 +309,18 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
       {canScroll.left || canScroll.right ? (
         <div className="flex justify-end gap-2">
           {[
-            { d: -1, on: canScroll.left, label: "Scroll photos left", Icon: ChevronLeft },
-            { d: 1, on: canScroll.right, label: "Scroll photos right", Icon: ChevronRight },
+            {
+              d: -1,
+              on: canScroll.left,
+              label: "Scroll photos left",
+              Icon: ChevronLeft,
+            },
+            {
+              d: 1,
+              on: canScroll.right,
+              label: "Scroll photos right",
+              Icon: ChevronRight,
+            },
           ].map(({ d, on, label, Icon }) => (
             <button
               key={d}
@@ -278,69 +336,82 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
         </div>
       ) : null}
 
-      {/* Focused view */}
-      {focused !== null ? (
+      {/* Focused view. Always mounted; shown/hidden instantly at the
+          transition's commit. The container is its own view-transition layer
+          (.lb-chrome), so the browser fades the backdrop + buttons in/out in
+          step with the photo morph — one animation, every time. */}
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal={isOpen}
+        aria-hidden={!isOpen}
+        aria-label={`Photo ${shown + 1} of ${photos.length}`}
+        inert={!isOpen}
+        className={`lb-chrome lb-fade fixed inset-0 z-[95] flex items-center justify-center p-4 ${
+          isOpen ? "visible opacity-100" : "pointer-events-none invisible opacity-0"
+        }`}
+      >
         <div
-          ref={dialogRef}
-          role="dialog"
-          aria-modal="true"
-          aria-label={`Photo ${focused + 1} of ${photos.length}`}
-          className="fixed inset-0 z-[95] flex items-center justify-center p-4"
-        >
-          <div
-            className="overlay-in absolute inset-0 bg-[rgb(0_0_0/0.72)] backdrop-blur-sm"
-            onClick={close}
-            aria-hidden
-          />
+          className="absolute inset-0 bg-[rgb(0_0_0/0.75)]"
+          onClick={close}
+          aria-hidden
+        />
 
-          <div className="relative w-[min(86vw,27.5rem,calc((100dvh-9rem)*0.8))]">
-            <div
-              className="touch-pan-y select-none"
-              onPointerDown={onPointerDown}
-              onPointerUp={onPointerUp}
-              onPointerCancel={() => (swipeX.current = null)}
-            >
-              <ViewTransition name={`polaroid-${focused}`} share="morph" default="none">
+        <div className="relative w-[min(86vw,27.5rem,calc((100dvh-9rem)*0.8))]">
+          <div
+            className="aspect-[5/6] touch-pan-y select-none"
+            onPointerDown={onPointerDown}
+            onPointerUp={onPointerUp}
+            onPointerCancel={() => (swipeX.current = null)}
+          >
+            {focused !== null ? (
+              <ViewTransition
+                name={`polaroid-${focused}`}
+                share="morph"
+                default="none"
+              >
                 <div key={focused} className={stepped ? "polaroid-swap" : ""}>
                   <Focused p={photos[focused]} preview={preview} />
                 </div>
               </ViewTransition>
-            </div>
-
-            <div className="mt-4 flex items-center justify-between text-[rgb(255_255_255/0.85)]">
-              <button
-                type="button"
-                onClick={() => step(-1)}
-                aria-label="Previous photo"
-                className="inline-flex size-9 items-center justify-center rounded-full bg-[rgb(255_255_255/0.08)] transition-colors hover:bg-[rgb(255_255_255/0.18)]"
-              >
-                <ChevronLeft aria-hidden className="size-4" strokeWidth={1.75} />
-              </button>
-              <span className="font-mono text-meta tabular-nums" aria-live="polite">
-                {focused + 1} / {photos.length}
-              </span>
-              <button
-                type="button"
-                onClick={() => step(1)}
-                aria-label="Next photo"
-                className="inline-flex size-9 items-center justify-center rounded-full bg-[rgb(255_255_255/0.08)] transition-colors hover:bg-[rgb(255_255_255/0.18)]"
-              >
-                <ChevronRight aria-hidden className="size-4" strokeWidth={1.75} />
-              </button>
-            </div>
+            ) : null}
           </div>
 
-          <button
-            ref={closeRef}
-            type="button"
-            onClick={close}
-            aria-label="Close photo"
-            className="absolute top-4 right-4 inline-flex size-10 items-center justify-center rounded-full bg-[rgb(255_255_255/0.08)] text-white transition-colors hover:bg-[rgb(255_255_255/0.18)]"
+          <div
+            className="mt-4 flex items-center justify-between text-[rgb(255_255_255/0.85)]"
           >
-            <X aria-hidden className="size-5" strokeWidth={1.75} />
-          </button>
+            <button
+              type="button"
+              onClick={() => step(-1)}
+              aria-label="Previous photo"
+              className="inline-flex size-9 items-center justify-center rounded-full bg-[rgb(255_255_255/0.08)] transition-colors hover:bg-[rgb(255_255_255/0.18)]"
+            >
+              <ChevronLeft aria-hidden className="size-4" strokeWidth={1.75} />
+            </button>
+            <span className="font-mono text-meta tabular-nums" aria-live="polite">
+              {shown + 1} / {photos.length}
+            </span>
+            <button
+              type="button"
+              onClick={() => step(1)}
+              aria-label="Next photo"
+              className="inline-flex size-9 items-center justify-center rounded-full bg-[rgb(255_255_255/0.08)] transition-colors hover:bg-[rgb(255_255_255/0.18)]"
+            >
+              <ChevronRight aria-hidden className="size-4" strokeWidth={1.75} />
+            </button>
+          </div>
         </div>
-      ) : null}
+
+        <button
+          ref={closeRef}
+          type="button"
+          onClick={close}
+          aria-label="Close photo"
+          className="absolute top-4 right-4 inline-flex size-10 items-center justify-center rounded-full bg-[rgb(255_255_255/0.08)] text-white transition-colors hover:bg-[rgb(255_255_255/0.18)]"
+        >
+          <X aria-hidden className="size-5" strokeWidth={1.75} />
+        </button>
+      </div>
     </div>
   );
 }
