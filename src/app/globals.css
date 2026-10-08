@@ -2,6 +2,8 @@
 
 /* ---------------------------------------------------------------------------
    Color tokens. Neutral palette + one accent: Gator orange (#FA4616).
+   Lines/borders are translucent (black on light, white on dark) so they
+   sit naturally over the hero background.
    Light by default, dark via system preference or [data-theme="dark"].
    --------------------------------------------------------------------------- */
 :root {
@@ -10,8 +12,8 @@
   --fg: #111111;
   --muted: #555553;
   --subtle: #6b6b68;
-  --line: #e4e4e0;
-  --line-strong: #d0d0cb;
+  --line: rgb(0 0 0 / 0.08);
+  --line-strong: rgb(0 0 0 / 0.16);
   --panel: #efefeb;
   --accent: #fa4616;
   --spot: rgb(0 0 0 / 0.045);
@@ -27,8 +29,8 @@
     --fg: #ececea;
     --muted: #a6a6a2;
     --subtle: #8c8c88;
-    --line: #1f1f1e;
-    --line-strong: #30302e;
+    --line: rgb(255 255 255 / 0.09);
+    --line-strong: rgb(255 255 255 / 0.16);
     --panel: #141413;
     --accent: #fa4616;
     --spot: rgb(255 255 255 / 0.06);
@@ -43,8 +45,8 @@
   --fg: #ececea;
   --muted: #a6a6a2;
   --subtle: #8c8c88;
-  --line: #1f1f1e;
-  --line-strong: #30302e;
+  --line: rgb(255 255 255 / 0.09);
+  --line-strong: rgb(255 255 255 / 0.16);
   --panel: #141413;
   --accent: #fa4616;
   --spot: rgb(255 255 255 / 0.06);
