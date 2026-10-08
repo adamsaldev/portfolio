@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Animated dithered-noise background (same look as React Bits "Dither"),
@@ -112,12 +112,17 @@ function compile(gl: WebGL2RenderingContext, type: number, src: string) {
 
 export function DitherBackground({ className = "" }: { className?: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
+  // Bumped when the browser restores a lost WebGL context, to rebuild everything.
+  const [generation, setGeneration] = useState(0);
 
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
+    // Next keeps the home page alive while you're on another route and reuses
+    // this same <canvas> on return, so the context must survive cleanup —
+    // never call loseContext() here.
     const gl = canvas.getContext("webgl2", { premultipliedAlpha: true, antialias: false, alpha: true });
-    if (!gl) return;
+    if (!gl || gl.isContextLost()) return;
 
     const vs = compile(gl, gl.VERTEX_SHADER, VERT);
     const fs = compile(gl, gl.FRAGMENT_SHADER, FRAG);
@@ -157,15 +162,21 @@ export function DitherBackground({ className = "" }: { className?: string }) {
     gl.uniform1f(u("uAmp"), SETTINGS.waveAmplitude);
     gl.uniform1f(u("uColorNum"), SETTINGS.colorNum);
 
+    // Tracks what *this* program was given, so a reused canvas that's already
+    // the right size still gets its viewport + uRes set on a fresh program.
+    let sentW = -1;
+    let sentH = -1;
     const resize = () => {
       const scale = Math.min(window.devicePixelRatio || 1, 2) / SETTINGS.pixelSize;
       const w = Math.max(1, Math.round(canvas.clientWidth * scale));
       const h = Math.max(1, Math.round(canvas.clientHeight * scale));
-      if (canvas.width !== w || canvas.height !== h) {
-        canvas.width = w;
-        canvas.height = h;
+      if (canvas.width !== w) canvas.width = w;
+      if (canvas.height !== h) canvas.height = h;
+      if (w !== sentW || h !== sentH) {
         gl.viewport(0, 0, w, h);
         gl.uniform2f(uRes, w, h);
+        sentW = w;
+        sentH = h;
       }
     };
 
@@ -207,6 +218,16 @@ export function DitherBackground({ className = "" }: { className?: string }) {
     ro.observe(canvas);
     document.addEventListener("visibilitychange", run);
     reduce.addEventListener("change", run);
+
+    // If the GPU drops the context (driver reset, too many contexts…), stop
+    // drawing and rebuild once the browser restores it.
+    const onLost = (e: Event) => {
+      e.preventDefault();
+      cancelAnimationFrame(raf);
+    };
+    const onRestored = () => setGeneration((g) => g + 1);
+    canvas.addEventListener("webglcontextlost", onLost);
+    canvas.addEventListener("webglcontextrestored", onRestored);
     run();
 
     return () => {
@@ -217,9 +238,17 @@ export function DitherBackground({ className = "" }: { className?: string }) {
       ro.disconnect();
       document.removeEventListener("visibilitychange", run);
       reduce.removeEventListener("change", run);
-      gl.getExtension("WEBGL_lose_context")?.loseContext();
+      canvas.removeEventListener("webglcontextlost", onLost);
+      canvas.removeEventListener("webglcontextrestored", onRestored);
+      // Free this run's GPU objects but keep the context itself alive.
+      if (!gl.isContextLost()) {
+        gl.deleteBuffer(buf);
+        gl.deleteProgram(prog);
+        gl.deleteShader(vs);
+        gl.deleteShader(fs);
+      }
     };
-  }, []);
+  }, [generation]);
 
   return (
     <canvas
