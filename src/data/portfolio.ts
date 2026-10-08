@@ -324,7 +324,7 @@ export const projects: Project[] = [
     role: "Creator / Software Engineer",
     year: "2025 — Present",
     description:
-      "A native college sports app — live scores, play-by-play, team and player stats, rankings, and game analytics, all pulled from a bunch of different sources into one place.",
+      "Live college scores, stats, and play-by-play, all in one app.",
     status: "published",
     needsVerification: false,
     featured: true,
@@ -443,12 +443,12 @@ export const projects: Project[] = [
   {
     slug: "autonomous-vision",
     number: "02",
-    name: "Autonomous Vision & Robot Control",
-    category: "Computer Vision / Robotics",
+    name: "Lane Detection Robot",
+    category: "Computer Vision",
     role: null,
     year: "2024",
     description:
-      "Computer vision + robot project. It looks at road video, finds the lane lines, figures out which way the road is turning, and shows it all in the app you use to drive the robot.",
+      "A robot that spots lane lines and figures out which way the road turns.",
     status: "published",
     needsVerification: false,
     technologies: ["Python", "OpenCV", "NumPy", "Tkinter", "HTTP requests"],
@@ -493,7 +493,7 @@ export const projects: Project[] = [
     media: {
       hero: {
         src: "/projects/autonomous-vision/autonomous-vision-hero.jpg",
-        label: "Autonomous Vision — Hero",
+        label: "Lane Detection Robot — Hero",
         alt: "Dashcam view of a highway at sunset with the detected lane lines drawn in cyan and the estimated lane center in red",
         frame: "wide",
       },
@@ -670,7 +670,7 @@ export const projects: Project[] = [
     role: null,
     year: "2026",
     description:
-      "Sorts a big list of numbers across multiple machines. Each one sorts its own chunk, everything stays in binary along the way, and the results get merged back together as they come in.",
+      "Sorts huge lists of numbers across multiple machines, all in binary.",
     status: "published",
     needsVerification: false,
     technologies: ["Python", "Dispy", "struct", "threading"],
