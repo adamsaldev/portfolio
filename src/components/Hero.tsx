@@ -166,16 +166,9 @@ export function Hero() {
                 <ul id="experience" className="space-y-2">
                   {jobs.map((job, i) => (
                     <li key={`${job.organization}-${i}`} className={job.placeholder ? "opacity-60" : ""}>
-                      <p>
-                        <span className="font-medium">{job.position}</span>
-                        <span className="text-muted">, </span>
-                        {job.href ? (
-                          <a href={job.href} target="_blank" rel="noopener noreferrer" className="link-quiet text-muted">
-                            {job.organization}
-                          </a>
-                        ) : (
-                          <span className="text-muted">{job.organization}</span>
-                        )}
+                      <p className="font-medium">{job.position}</p>
+                      <p className="text-muted">
+                        <Institution name={job.organization} href={job.href} logo={job.logo} />
                       </p>
                       <p className="mt-0.5 font-mono text-meta text-subtle">
                         {job.date}

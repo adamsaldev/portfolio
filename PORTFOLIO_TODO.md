@@ -70,5 +70,5 @@ Find every marker in code with: `grep -rn "TODO(PORTFOLIO)" src public`
 
 ## Experience
 
-- [ ] Replace the two placeholder entries in `experience` with real roles: organization, position, dates, location, and a one-line description. Add an optional logo at `public/logos/…` and set `logo`.
-- [ ] Remove `placeholder: true` from each real entry. **Previously** stays hidden in production until at least one real entry exists.
+- [x] Freelance Videographer & Photographer, @adamflicks (2023 — Present)
+- [ ] Add more roles to `experience` in `src/data/portfolio.ts` as you get them (optional `logo` at `public/logos/…`)

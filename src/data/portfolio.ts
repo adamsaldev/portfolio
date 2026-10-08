@@ -293,24 +293,14 @@ export const education: Education[] = [
 // ---------------------------------------------------------------------------
 
 export const experience: Experience[] = [
-  // TODO(PORTFOLIO): Replace with real experience. Placeholder entries are
-  // only visible in draft mode; PREVIOUSLY hides itself in production when
-  // there are no real entries. Optional `logo` shows inline before the org.
   {
-    organization: "Organization",
-    position: "Position",
-    date: "Dates",
+    organization: "@adamflicks",
+    position: "Freelance Videographer & Photographer",
+    date: "2023 — Present",
     location: null,
-    description: "one-line description of what you did",
-    placeholder: true,
-  },
-  {
-    organization: "Organization",
-    position: "Position",
-    date: "Dates",
-    location: null,
-    description: "one-line description of what you did",
-    placeholder: true,
+    description: "Freelance video and photo work",
+    href: "https://www.instagram.com/adamflicks",
+    logo: "/logos/instagram.png",
   },
 ];
 
