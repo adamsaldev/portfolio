@@ -20,7 +20,7 @@ const SETTINGS = {
   colorNum: 13.1,
   pixelSize: 4, // dither cell size in device pixels (original default: 2)
   fps: 30,
-  opacity: 0.5, // overall strength of the background (0–1)
+  opacity: 0.33, // overall strength of the background (0–1)
 };
 
 const VERT = `#version 300 es
