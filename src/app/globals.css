@@ -76,7 +76,6 @@
   --color-accent: var(--accent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-hand: var(--font-caveat);
 
   --text-meta: 0.71875rem;
   --text-meta--line-height: 1rem;
@@ -258,16 +257,16 @@ p {
   }
 }
 
-/* Polaroids: resting tilt, lift on hover, drop in when scrolled into view. */
+/* Photo pile: resting tilt + offset, lift on hover, drop in when scrolled into view. */
 .polaroid-card {
   position: relative;
-  transform: rotate(var(--r, 0deg));
+  transform: translateY(var(--y, 0px)) rotate(var(--r, 0deg));
   transition: transform 450ms var(--ease);
 }
 .polaroid-card:hover,
 .polaroid-card:focus-within {
-  z-index: 2;
-  transform: translateY(-10px) rotate(0deg) scale(1.04);
+  z-index: 20;
+  transform: translateY(calc(var(--y, 0px) - 12px)) rotate(0deg) scale(1.06);
 }
 html.js .polaroid-card:not(.is-in) {
   opacity: 0;
@@ -279,7 +278,7 @@ html.js .polaroid-card:not(.is-in) {
 @keyframes polaroid-drop {
   from {
     opacity: 0;
-    transform: translateY(-70px) rotate(calc(var(--r, 0deg) * -3)) scale(1.08);
+    transform: translateY(calc(var(--y, 0px) - 70px)) rotate(calc(var(--r, 0deg) * -3)) scale(1.08);
   }
 }
 .polaroid-swap {

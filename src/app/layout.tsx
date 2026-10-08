@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Caveat, Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import { personal, seo } from "@/data/portfolio";
 import { ClientEffects } from "@/components/ClientEffects";
 import { CommandPalette } from "@/components/CommandPalette";
@@ -12,8 +12,6 @@ import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
-// Handwriting, only for polaroid captions — not preloaded.
-const caveat = Caveat({ variable: "--font-caveat", subsets: ["latin"], preload: false });
 
 export const metadata: Metadata = {
   // Canonical + absolute Open Graph URLs. Falls back to localhost for local builds.
@@ -53,7 +51,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       // changes jump to the top instantly — otherwise the scroll runs during
       // the card → hero morph and the image lands, then snaps.
       data-scroll-behavior="smooth"
-      className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       suppressHydrationWarning
     >
       <head>

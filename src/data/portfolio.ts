@@ -765,8 +765,6 @@ export interface Polaroid {
   /** Path under /public. Portrait photos look best (shown at 5:6). */
   src: string;
   alt: string;
-  /** Optional handwritten caption on the polaroid's bottom strip. */
-  caption?: string;
 }
 
 export const polaroids: Polaroid[] = [

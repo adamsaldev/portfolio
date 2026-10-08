@@ -13,48 +13,35 @@ import {
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import type { Polaroid } from "@/data/portfolio";
 
-// Resting tilt per card (degrees), repeated for longer lists.
-const TILTS = [-4, 3, -2, 4, -3, 2];
+// Resting tilt (degrees) and vertical offset (px) per photo, repeated for longer lists.
+const TILTS = [-5, 4, -2, 6, -4, 3, -6, 2];
+const OFFSETS = [0, 14, -6, 10, -12, 6, 16, -4];
 
-/**
- * Polaroid frame. Corners are concentric: outer radius = photo radius + side
- * padding (both set as CSS variables below, so they can't drift apart).
- */
+/** Bare photo: rounded corners + the same thin translucent stroke as project cards. */
 function Frame({ p, large = false }: { p: Polaroid; large?: boolean }) {
   return (
     <div
-      className={`rounded-[calc(var(--r-in)+var(--pad))] bg-[#fbfbf8] p-[var(--pad)] shadow-[0_1px_2px_rgb(0_0_0/0.12),0_12px_28px_-10px_rgb(0_0_0/0.35)] ${
+      className={`relative aspect-[5/6] overflow-hidden border border-line bg-panel ${
         large
-          ? "pb-14 [--pad:14px] [--r-in:12px] sm:pb-16 sm:[--pad:16px]"
-          : "pb-9 [--pad:8px] [--r-in:8px]"
+          ? "rounded-2xl shadow-[0_30px_80px_-24px_rgb(0_0_0/0.7)]"
+          : "rounded-xl shadow-[0_10px_24px_-12px_rgb(0_0_0/0.5)]"
       }`}
     >
-      <div className="relative aspect-[5/6] overflow-hidden rounded-[var(--r-in)] bg-[#e9e9e4]">
-        <Image
-          src={p.src}
-          alt={p.alt}
-          fill
-          sizes={large ? "(min-width: 640px) 440px, 86vw" : "200px"}
-          className="object-cover"
-          draggable={false}
-        />
-      </div>
-      {p.caption ? (
-        <p
-          className={`truncate text-center font-hand leading-none text-[#2b2b2b] ${
-            large ? "mt-4 text-[1.75rem] sm:mt-5 sm:text-[2rem]" : "mt-2.5 text-[1.375rem]"
-          }`}
-        >
-          {p.caption}
-        </p>
-      ) : null}
+      <Image
+        src={p.src}
+        alt={p.alt}
+        fill
+        sizes={large ? "(min-width: 640px) 440px, 86vw" : "200px"}
+        className="object-cover"
+        draggable={false}
+      />
     </div>
   );
 }
 
 /**
- * A row of tilted polaroids. They drop in when scrolled into view, lift on
- * hover, and open into a focused view on click (shared-element morph via
+ * A messy, overlapping pile of tilted photos. They drop in when scrolled into
+ * view, lift on hover, and open into a focused view on click (shared-element morph via
  * React <ViewTransition>). Arrow keys navigate; Esc / backdrop closes.
  */
 export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
@@ -148,21 +135,22 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
     <div ref={rootRef} className="relative">
       <ul
         ref={trackRef}
-        className="-mx-5 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pt-6 pb-10 [justify-content:safe_center] [mask-image:linear-gradient(to_right,transparent,black_2.5rem,black_calc(100%-2.5rem),transparent)] [scrollbar-width:none] sm:-mx-8 sm:gap-8 sm:px-8 [&::-webkit-scrollbar]:hidden"
+        className="-mx-5 flex snap-x snap-mandatory overflow-x-auto px-5 pt-10 pb-14 [justify-content:safe_center] [mask-image:linear-gradient(to_right,transparent,black_2.5rem,black_calc(100%-2.5rem),transparent)] [scrollbar-width:none] sm:-mx-8 sm:px-8 [&::-webkit-scrollbar]:hidden"
       >
         {photos.map((p, i) => {
           const tilt = TILTS[i % TILTS.length];
+          const offset = OFFSETS[i % OFFSETS.length];
           const isFocused = focused === i;
           return (
             <li
               key={p.src}
-              className={`polaroid-card w-40 shrink-0 snap-center sm:w-44 ${inView ? "is-in" : ""}`}
-              style={{ "--r": `${tilt}deg`, "--i": i } as CSSProperties}
+              className={`polaroid-card w-40 shrink-0 snap-center not-first:-ml-10 sm:w-44 sm:not-first:-ml-12 ${inView ? "is-in" : ""}`}
+              style={{ "--r": `${tilt}deg`, "--y": `${offset}px`, "--i": i } as CSSProperties}
             >
               <button
                 type="button"
                 onClick={(e) => open(i, e.currentTarget)}
-                aria-label={`Open photo ${i + 1} of ${photos.length}${p.caption ? `: ${p.caption}` : ""}`}
+                aria-label={`Open photo ${i + 1} of ${photos.length}`}
                 className="block w-full cursor-zoom-in rounded-2xl outline-offset-4"
               >
                 {isFocused ? (
