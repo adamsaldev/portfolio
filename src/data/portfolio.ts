@@ -443,7 +443,7 @@ export const projects: Project[] = [
   {
     slug: "autonomous-vision",
     number: "02",
-    name: "Lane Detection Robot",
+    name: "Lane Detection Automation",
     category: "Computer Vision / Robotics",
     role: null,
     year: "2024",
@@ -493,7 +493,7 @@ export const projects: Project[] = [
     media: {
       hero: {
         src: "/projects/autonomous-vision/autonomous-vision-hero.jpg",
-        label: "Lane Detection Robot — Hero",
+        label: "Lane Detection Automation — Hero",
         alt: "Dashcam view of a highway at sunset with the detected lane lines drawn in cyan and the estimated lane center in red",
         frame: "wide",
       },
