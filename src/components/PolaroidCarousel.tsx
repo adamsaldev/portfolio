@@ -292,7 +292,7 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
                 ) : (
                   <ViewTransition
                     name={`polaroid-${i}`}
-                    share="morph"
+                    share="photo-zoom"
                     default="none"
                   >
                     <div>
@@ -367,7 +367,7 @@ export function PolaroidCarousel({ photos }: { photos: Polaroid[] }) {
             {focused !== null ? (
               <ViewTransition
                 name={`polaroid-${focused}`}
-                share="morph"
+                share="photo-zoom"
                 default="none"
               >
                 <div key={focused} className={stepped ? "polaroid-swap" : ""}>

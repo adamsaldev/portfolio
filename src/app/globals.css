@@ -257,43 +257,44 @@ p {
   }
 }
 
-/* Photo pile: resting tilt + offset, lift on hover, drop in when scrolled into view. */
+/* Photo pile — deliberately quiet motion.
+   Rest: tilt + offset. Hover/keyboard focus: a slight lift, come to front.
+   Enter: soft fade with a small rise, lightly staggered. */
 .polaroid-card {
   position: relative;
   transform: translateY(var(--y, 0px)) rotate(var(--r, 0deg));
-  transition: transform 450ms var(--ease);
+  transition: transform 300ms var(--ease);
 }
-/* Lift on real hover (not sticky after a tap) or keyboard focus (not after a click). */
 @media (hover: hover) {
   .polaroid-card:hover {
     z-index: 20;
-    transform: translateY(calc(var(--y, 0px) - 12px)) rotate(0deg) scale(1.06);
+    transform: translateY(calc(var(--y, 0px) - 4px)) rotate(var(--r, 0deg));
   }
 }
 .polaroid-card:has(:focus-visible) {
   z-index: 20;
-  transform: translateY(calc(var(--y, 0px) - 12px)) rotate(0deg) scale(1.06);
+  transform: translateY(calc(var(--y, 0px) - 4px)) rotate(var(--r, 0deg));
 }
 html.js .polaroid-card:not(.is-in) {
   opacity: 0;
 }
 .polaroid-card.is-in {
-  animation: polaroid-drop 850ms var(--ease) backwards;
-  animation-delay: calc(var(--i, 0) * 120ms);
+  animation: polaroid-in 600ms var(--ease) backwards;
+  animation-delay: calc(var(--i, 0) * 50ms);
 }
-@keyframes polaroid-drop {
+@keyframes polaroid-in {
   from {
     opacity: 0;
-    transform: translateY(calc(var(--y, 0px) - 70px)) rotate(calc(var(--r, 0deg) * -3)) scale(1.08);
+    transform: translateY(calc(var(--y, 0px) + 8px)) rotate(var(--r, 0deg));
   }
 }
+/* Stepping between photos in the focused view: plain crossfade. */
 .polaroid-swap {
-  animation: polaroid-swap 320ms var(--ease) both;
+  animation: polaroid-swap 200ms ease-out both;
 }
 @keyframes polaroid-swap {
   from {
     opacity: 0;
-    transform: translateY(10px) scale(0.98);
   }
 }
 
@@ -515,17 +516,26 @@ html[data-scrolled] .site-header {
   view-transition-name: lb-chrome;
 }
 ::view-transition-new(lb-chrome) {
-  animation: 280ms ease-out both vt-fade;
+  animation: 240ms ease-out both vt-fade;
 }
 ::view-transition-old(lb-chrome) {
-  animation: 220ms ease-in both vt-fade reverse;
+  animation: 180ms ease-in both vt-fade reverse;
 }
 /* Keep the flying photo above the backdrop layer (both open and close). */
 ::view-transition-group(lb-chrome) {
   z-index: 1;
 }
-::view-transition-group(.morph) {
+::view-transition-group(.photo-zoom) {
   z-index: 2;
+}
+/* Photo zoom: quick and clean — no blur, no overshoot. */
+::view-transition-group(.photo-zoom) {
+  animation-duration: 340ms;
+  animation-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+::view-transition-old(.photo-zoom),
+::view-transition-new(.photo-zoom) {
+  animation-duration: 340ms;
 }
 /* Browsers without View Transitions: a plain CSS fade instead. */
 @supports not (view-transition-name: none) {
